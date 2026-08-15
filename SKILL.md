@@ -7,7 +7,7 @@ description: "台股個股初步分析六步驟流程。當使用者提供台股
 
 > ⚠️ **這是 Claude Skills 工具專屬版**，包含 `create_file`／`present_files`／`visualize` 等 Claude 專屬工具的使用規則、以及 Git 版控自動化流程。若你想在其他 AI 聊天工具（沒有檔案系統或 bash 工具）使用，請改用同目錄下的 [`台股個股分析框架_通用版.md`](./台股個股分析框架_通用版.md)。
 >
-> ⚙️ **使用前必須修改**：本檔案中的 Git repo 網址與 GitHub Pages 網址皆為佔位符（`{your-username}/{your-repo}`），請先替換成你自己的 repo，否則 AI 會嘗試把分析報告 push 到別人的 repository。
+> ⚙️ **使用前必須修改**：本檔案中的 Git repo 網址與 GitHub Pages 網址皆為佔位符（`qqryono1/stock-analysis`），請先替換成你自己的 repo，否則 AI 會嘗試把分析報告 push 到別人的 repository。
 
 一套六步驟的台股分析框架，核心原則是「現金流優先、基本面在後」——避免看到公司背景、產業地位、法說會樂觀話術後，帶著先入為主的印象去解讀財務數據。
 
@@ -26,7 +26,7 @@ description: "台股個股初步分析六步驟流程。當使用者提供台股
 第六步：投資決策推理（買入/續抱/賣出）── 僅使用者主動詢問才做
 ```
 
-每次對話開始進行新股票分析前，先向使用者索取 GitHub Personal Access Token（用於推送分析成果至 `https://github.com/{your-username}/{your-repo}`），並明確告知：「此 token 僅在本次對話中使用，不會被記住，開新對話框分析下一檔股票時需要重新提供。」若使用者尚未提供 token 就要求開始分析，仍可先進行現金流分析（第一步），但在第一次需要輸出/推送報告前，務必先跟使用者要 token，不要跳過此步驟直接嘗試 push。
+每次對話開始進行新股票分析前，先向使用者索取 GitHub Personal Access Token（用於推送分析成果至 `https://github.com/qqryono1/stock-analysis`），並明確告知：「此 token 僅在本次對話中使用，不會被記住，開新對話框分析下一檔股票時需要重新提供。」若使用者尚未提供 token 就要求開始分析，仍可先進行現金流分析（第一步），但在第一次需要輸出/推送報告前，務必先跟使用者要 token，不要跳過此步驟直接嘗試 push。
 
 每次開始分析新股票時，先用一句話列出這六步驟給使用者看（除非使用者只針對單一模組提問），再依序執行。每進入一個新步驟時，開頭標示進度，例如：「【第 1 步／共 6 步：現金流量表六大規則分析】」。
 
@@ -193,7 +193,7 @@ description: "台股個股初步分析六步驟流程。當使用者提供台股
 
 ## GitHub 版控與總覽首頁維護規則（貫穿全程）
 
-Repo: `https://github.com/{your-username}/{your-repo}/`
+Repo: `https://github.com/qqryono1/stock-analysis/`
 GitHub Pages 首頁: `http://{your-username}.github.io/{your-repo}/`
 
 每次對話代表一檔股票的完整分析，每完成一個步驟區塊、更新一次 HTML 報告，就要 git push，讓使用者的分析歷程留在版控紀錄中，不只靠最後一次 present_files。
@@ -218,7 +218,7 @@ GitHub Pages 首頁: `http://{your-username}.github.io/{your-repo}/`
 ### 三、Git Push 標準流程
 1. 主動詢問使用者要 push 的 GitHub Personal Access Token（不假設 token 仍記得或有效）。
 2. `git remote set-url origin` 帶入 token → `git fetch` + `git reset --hard origin/main` 同步遠端避免衝突 → `git add` → `git -c user.email/-c user.name commit` → `git push`。
-3. push 完成後，無論成功失敗，立即將 `remote set-url` 改回乾淨的 `https://github.com/{your-username}/{your-repo}.git`（不留 token）。
+3. push 完成後，無論成功失敗，立即將 `remote set-url` 改回乾淨的 `https://github.com/qqryono1/stock-analysis.git`（不留 token）。
 4. push 前用 `curl -H "Authorization: token <TOKEN>" https://api.github.com/user` 快速驗證 token 是否有效，避免無效 token 浪費來回確認的步驟。
 5. 完成後提供 GitHub Pages 連結格式：
    - 報告連結：`http://{your-username}.github.io/{your-repo}/reports/{檔名}`
