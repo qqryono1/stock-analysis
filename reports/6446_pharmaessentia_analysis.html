@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6446 藥華藥 — 現金流量表六大規則分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12202A; --paper:#FFFFFF; --bg:#EDF1F2; --line:#D7DFE3;
+  --muted:#65767F; --pos:#0F6E5C; --neg:#C4453B; --sig:#1B4B63;
+  --peak:#E8D48B; --trough:#F2B8BE; --warn:#FBF0DC;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC",system-ui,sans-serif;line-height:1.75;
+  -webkit-font-smoothing:antialiased;}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 80px}
+header.hero{background:var(--sig);color:#EAF2F5;padding:44px 0 34px;
+  border-bottom:6px solid #0E3547}
+.hero .wrap{padding-bottom:0}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;color:#8FB6C6;margin:0 0 10px}
+h1{font-family:"Noto Serif TC",serif;font-weight:700;font-size:clamp(28px,5vw,42px);
+  margin:0 0 6px;letter-spacing:.02em}
+.sub{color:#B8D2DD;font-size:15px;margin:0}
+.hero .badge{margin-top:16px;display:block}
+/* nav */
+nav.stepnav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);overflow-x:auto}
+nav.stepnav ul{display:flex;gap:4px;list-style:none;margin:0 auto;padding:8px 20px;
+  max-width:880px;white-space:nowrap}
+.pad{font-family:"IBM Plex Mono",monospace;font-size:12.5px;padding:7px 12px;
+  border-radius:999px;color:var(--muted);cursor:pointer;border:1px solid transparent;
+  background:none;transition:.18s}
+.pad:hover{background:#E3EBEE;color:var(--ink)}
+.pad.active{background:var(--sig);color:#fff;border-color:var(--sig)}
+.pad.locked{opacity:.38;cursor:not-allowed}
+.pad.locked:hover{background:none;color:var(--muted)}
+/* sections */
+section{background:var(--paper);border:1px solid var(--line);border-radius:4px;
+  padding:30px 26px;margin-top:26px}
+.steptag{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;
+  color:var(--sig);border-left:3px solid var(--sig);padding-left:10px;margin-bottom:14px}
+h2{font-family:"Noto Serif TC",serif;font-size:24px;margin:0 0 4px}
+h3{font-family:"Noto Serif TC",serif;font-size:18.5px;margin:34px 0 6px;
+  padding-top:22px;border-top:1px solid var(--line)}
+h3:first-of-type{border-top:none;padding-top:0}
+h3 .no{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--sig);
+  margin-right:9px;letter-spacing:.08em}
+p{margin:10px 0}
+.key{border-left:5px solid var(--sig);background:#EAF1F4;padding:14px 16px;
+  border-radius:0 4px 4px 0;margin:14px 0 18px;font-size:15px}
+.key.alert{border-left-color:var(--neg);background:#FBEDEC}
+.key b{font-weight:700}
+.persona{display:inline-block;font-family:"Noto Serif TC",serif;font-size:15px;
+  background:#F1EAD8;border:1px solid #DFCF9F;padding:3px 12px;border-radius:3px;
+  margin:6px 0 2px}
+.score-pill{float:right;font-family:"IBM Plex Mono",monospace;font-size:13px;
+  background:var(--sig);color:#fff;padding:3px 11px;border-radius:3px;margin-top:4px}
+.score-pill.low{background:var(--neg)}
+table{width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:14.5px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left}
+thead th{background:#F3F6F7;font-size:13px;font-weight:700;color:var(--muted);
+  border-bottom:2px solid #C3CFD5;white-space:nowrap}
+tbody th{font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap}
+.num{font-family:"IBM Plex Mono",monospace;text-align:right}
+.negv{color:var(--neg)} .posv{color:var(--pos)}
+tr.warn td,tr.warn th{background:var(--warn)}
+tr.qrow td,tr.qrow th{background:#F4F6F7;font-style:italic;color:var(--muted)}
+.qtag{font-family:"Noto Sans TC";font-size:10.5px;background:#DCE4E8;color:#5A6B75;
+  padding:1px 6px;border-radius:3px;margin-left:6px;font-style:normal}
+.pass{color:var(--pos);font-weight:700} .fail{color:var(--neg);font-weight:700}
+.why{font-size:13px;color:var(--muted)}
+.calc{font-family:"IBM Plex Mono",monospace;font-size:10.5px;background:#E7EDF0;color:#4E5F68;padding:1px 6px;border-radius:3px;margin-right:5px}
+section a{color:var(--sig);text-decoration:underline;text-underline-offset:2px}
+.tag-good{color:var(--pos);font-weight:600}
+.tag-ok{color:#8A6D1F} .tag-bad{color:var(--neg)}
+.chart{width:100%;height:auto;display:block;margin:14px 0 4px}
+.chart .tick{font-family:"IBM Plex Mono",monospace;font-size:11px;fill:#7E8D95}
+.chart .vlab{font-family:"IBM Plex Mono",monospace;font-size:11.5px;fill:#31424C}
+.chart .vlab.sm{font-size:10px}
+.chart .vlab.q,.chart .xlab.q{fill:#93A2AA;font-style:italic}
+.chart .xlab{font-family:"IBM Plex Mono",monospace;font-size:11.5px;fill:#4E5F68}
+.chart .unit{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:#93A2AA}
+.chart .leg{font-family:"Noto Sans TC";font-size:12px;fill:#4E5F68}
+.cap{font-size:13px;color:var(--muted);margin:4px 0 0}
+.legend-note{font-size:12.5px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;
+  align-items:center;margin-top:6px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;
+  vertical-align:-1px}
+.meter{background:#E4EAED;height:9px;border-radius:5px;overflow:hidden;min-width:110px}
+.meter i{display:block;height:100%;background:var(--sig)}
+.total{text-align:center;padding:22px;background:#EAF1F4;border:1px solid #C6D8E0;
+  border-radius:4px;margin-top:22px}
+.total .big{font-family:"IBM Plex Mono",monospace;font-size:46px;font-weight:600;
+  color:var(--sig);line-height:1}
+.total .lv{font-family:"Noto Serif TC",serif;font-size:19px;margin-top:6px}
+.snap-note{font-size:12.5px;color:var(--muted);background:#F5F7F8;border:1px dashed #C9D4D9;
+  padding:10px 13px;border-radius:4px;margin-top:14px}
+footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:32px;line-height:2}
+@media(max-width:560px){section{padding:22px 15px} table{font-size:13px}
+  th,td{padding:6px 5px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Taiwan Stock · Cash-Flow First</p>
+    <h1>6446 藥華藥</h1>
+    <p class="sub">現金流量表六大規則分析 ── 盲測階段（未參考股價、EPS、產業地位與新聞）</p>
+    <img class="badge" src="https://visitor-badge.laobi.icu/badge?page_id=qqryono1.stock-analysis.6446" alt="Visitors" style="opacity:0.85;">
+  </div>
+</header>
+
+<nav class="stepnav">
+  <ul>
+    <li class="pad active" data-target="step1">01 現金流六大規則</li>
+    <li class="pad" data-target="step1b">01B 明細校正</li>
+    <li class="pad" data-target="step1c">01C 季度再校正</li>
+    <li class="pad" data-target="step2">02 基本資訊</li>
+    <li class="pad" data-target="step3">03 法說會</li>
+    <li class="pad" data-target="step4">04 營收趨勢</li>
+    <li class="pad" data-target="step5">05 前瞻本益比</li>
+    <li class="pad" data-target="step6">06 投資決策</li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+<section id="step1">
+  <p class="steptag">第 1 步／共 6 步：現金流量表六大規則分析</p>
+  <h2>先看現金，再看故事</h2>
+  <p>這一步刻意不查股價、EPS、產業地位與新聞，只用現金流量表本身的數字判斷。使用者提供的截圖雖然含有年度股價欄位，分析時已排除不採用，以維持盲測的獨立性。</p>
+
+  <div class="key">
+    <b>一句話結論：</b>這是一家<b>用外部資金撐過 8 年虧損、2024 年起本業現金流由負轉正並快速放大</b>的公司。2016–2023 年連續八年營業活動現金流（A）為負，靠融資活動（C）大量輸血；<b>2024 年 A 轉為 +25.2 億、2025 年再翻倍至 +52.8 億</b>，同時 C 轉為淨流出，代表已能自給自足。總分 <b>68.3 分（良好）</b>，可以繼續往下看基本面。
+  </div>
+
+  <div class="key alert">
+    <b>但有兩個不能忽略的弱項：</b>①<span class="negv">規則五只有 1／10 年通過</span>——多數年度 A 為負值，2024 年 A（25.2 億）仍<span class="negv">小於稅前淨利（29.9 億）</span>，現金入帳落後帳面獲利；②<span class="negv">歷史上有 6 個年度出現「A 為負 ＋ C 為正」的最高警戒組合</span>，需要融資明細才能判斷當年靠的是現金增資還是純舉債。
+  </div>
+
+  <h3><span class="no">DATA</span>現金流量彙總（單位：億元）</h3>
+  <table>
+    <thead><tr><th>年度</th><th class="num">A 營業活動</th><th class="num">B 投資活動</th>
+      <th class="num">C 融資活動</th><th class="num">D 稅前淨利</th><th class="num">E 期末現金</th></tr></thead>
+    <tbody><tr><th scope="row">2016</th><td class="num negv">-6.57</td><td class="num negv">-0.29</td><td class="num posv">41.7</td><td class="num negv">-8.45</td><td class="num">40.4</td></tr>
+<tr><th scope="row">2017</th><td class="num negv">-7.9</td><td class="num negv">-0.62</td><td class="num negv">-0.05</td><td class="num negv">-8.72</td><td class="num">31.9</td></tr>
+<tr><th scope="row">2018</th><td class="num negv">-8.27</td><td class="num negv">-1.89</td><td class="num negv">-0.04</td><td class="num negv">-10.4</td><td class="num">21.7</td></tr>
+<tr><th scope="row">2019</th><td class="num negv">-9.45</td><td class="num negv">-2.38</td><td class="num posv">4.11</td><td class="num negv">-8.42</td><td class="num">14</td></tr>
+<tr><th scope="row">2020</th><td class="num negv">-14.6</td><td class="num negv">-3.02</td><td class="num posv">35.7</td><td class="num negv">-19.5</td><td class="num">32</td></tr>
+<tr><th scope="row">2021</th><td class="num negv">-24.6</td><td class="num negv">-0.78</td><td class="num posv">28.1</td><td class="num negv">-28.1</td><td class="num">34.5</td></tr>
+<tr><th scope="row">2022</th><td class="num negv">-15.1</td><td class="num negv">-12.4</td><td class="num posv">95.8</td><td class="num negv">-18.4</td><td class="num">103</td></tr>
+<tr><th scope="row">2023</th><td class="num negv">-7.1</td><td class="num negv">-4.87</td><td class="num posv">105</td><td class="num negv">-9.87</td><td class="num">197</td></tr>
+<tr><th scope="row">2024</th><td class="num posv">25.2</td><td class="num negv">-13.3</td><td class="num negv">-1.63</td><td class="num posv">29.9</td><td class="num">211</td></tr>
+<tr><th scope="row">2025</th><td class="num posv">52.8</td><td class="num negv">-24.8</td><td class="num negv">-5</td><td class="num posv">49.8</td><td class="num">227</td></tr>
+<tr class="qrow"><th scope="row">26H1<span class='qtag'>半年累計</span></th><td class="num posv">41.3</td><td class="num negv">-26.7</td><td class="num posv">0.69</td><td class="num posv">55.3</td><td class="num">245</td></tr></tbody>
+  </table>
+  <p class="cap">26H1 為 2026 年上半年累計數（期初 227 億與 2025 年期末一致），<b>僅供參考、不列入計分</b>，計分一律以完整年度為準。</p>
+  <div class="snap-note">資料來源：使用者提供之 Goodinfo 現金流量表截圖（<a href="https://goodinfo.tw/tw/StockCashFlow.asp?STOCK_ID=6446">goodinfo.tw/tw/StockCashFlow.asp?STOCK_ID=6446</a>）。本節數字非本次搜尋所得，未經第三方交叉驗證。</div>
+
+  <h3><span class="no">規則一</span>A 逐年成長趨勢<span class="score-pill">85 分</span></h3>
+  <svg viewBox="0 0 760 330" class="chart" role="img" aria-label="">
+<line x1="62" y1="284.0" x2="742" y2="284.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="288.0" text-anchor="end" class="tick">-40</text>
+<line x1="62" y1="232.4" x2="742" y2="232.4" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="236.4" text-anchor="end" class="tick">-20</text>
+<line x1="62" y1="180.8" x2="742" y2="180.8" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="184.8" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="129.2" x2="742" y2="129.2" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="133.2" text-anchor="end" class="tick">20</text>
+<line x1="62" y1="77.6" x2="742" y2="77.6" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="81.6" text-anchor="end" class="tick">40</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">60</text>
+<rect x="75.6" y="180.8" width="34.6" height="17.0" fill="#C4453B" rx="2"/>
+<text x="92.9" y="211.8" text-anchor="middle" class="vlab">-6.57</text>
+<text x="92.9" y="314" text-anchor="middle" class="xlab">2016</text>
+<rect x="137.4" y="180.8" width="34.6" height="20.4" fill="#C4453B" rx="2"/>
+<text x="154.7" y="215.2" text-anchor="middle" class="vlab">-7.9</text>
+<text x="154.7" y="314" text-anchor="middle" class="xlab">2017</text>
+<rect x="199.2" y="180.8" width="34.6" height="21.3" fill="#C4453B" rx="2"/>
+<text x="216.5" y="216.1" text-anchor="middle" class="vlab">-8.27</text>
+<text x="216.5" y="314" text-anchor="middle" class="xlab">2018</text>
+<rect x="261.1" y="180.8" width="34.6" height="24.4" fill="#C4453B" rx="2"/>
+<text x="278.4" y="219.2" text-anchor="middle" class="vlab">-9.45</text>
+<text x="278.4" y="314" text-anchor="middle" class="xlab">2019</text>
+<rect x="322.9" y="180.8" width="34.6" height="37.7" fill="#C4453B" rx="2"/>
+<text x="340.2" y="232.5" text-anchor="middle" class="vlab">-14.6</text>
+<text x="340.2" y="314" text-anchor="middle" class="xlab">2020</text>
+<rect x="384.7" y="180.8" width="34.6" height="63.5" fill="#F2B8BE" rx="2"/>
+<text x="402.0" y="258.3" text-anchor="middle" class="vlab">-24.6</text>
+<text x="402.0" y="314" text-anchor="middle" class="xlab">2021</text>
+<rect x="446.5" y="180.8" width="34.6" height="39.0" fill="#C4453B" rx="2"/>
+<text x="463.8" y="233.8" text-anchor="middle" class="vlab">-15.1</text>
+<text x="463.8" y="314" text-anchor="middle" class="xlab">2022</text>
+<rect x="508.3" y="180.8" width="34.6" height="18.3" fill="#C4453B" rx="2"/>
+<text x="525.6" y="213.1" text-anchor="middle" class="vlab">-7.1</text>
+<text x="525.6" y="314" text-anchor="middle" class="xlab">2023</text>
+<rect x="570.1" y="115.8" width="34.6" height="65.0" fill="#0F6E5C" rx="2"/>
+<text x="587.5" y="109.8" text-anchor="middle" class="vlab">25.2</text>
+<text x="587.5" y="314" text-anchor="middle" class="xlab">2024</text>
+<rect x="632.0" y="44.6" width="34.6" height="136.2" fill="#E8D48B" rx="2"/>
+<text x="649.3" y="38.6" text-anchor="middle" class="vlab">52.8</text>
+<text x="649.3" y="314" text-anchor="middle" class="xlab">2025</text>
+<rect x="693.8" y="74.2" width="34.6" height="106.6" fill="rgba(15,110,92,0.14)" stroke="#6B7A85" stroke-width="1.3" stroke-dasharray="4 3" rx="2"/>
+<text x="711.1" y="68.2" text-anchor="middle" class="vlab q">41.3</text>
+<text x="711.1" y="314" text-anchor="middle" class="xlab q">26H1</text>
+<text x="54" y="16" text-anchor="end" class="unit">億元</text>
+</svg>
+  <p class="cap">虛線框為 2026 上半年累計，僅供參考不列入計分。米色為區間高峰、粉色為區間谷底。</p>
+  <p><b>數字現象：</b>2016 至 2023 連續 8 年 A 為負，且愈燒愈兇，2021 年谷底達 −24.6 億。2022 年起降幅收斂（−15.1 → −7.1），<b>2024 年由負翻正至 +25.2 億</b>，2025 年再倍增至 <b>+52.8 億</b>。2026 上半年已入帳 41.3 億，等於 2025 全年的 78%。</p>
+  <p class="persona">個性標籤：「長跑十年、終於衝過線」型</p>
+  <p>轉折發生在 2023→2024 之間，而且不是曇花一現的單年跳動——2025 年在高基期上再成長逾一倍，2026 上半年維持強度，是連續三個觀察點都朝同方向的趨勢，不是雜訊。扣分處在於整段歷史有 8 年為負，中長期平均仍不好看，且轉正時間只有兩年多，可持續性尚未經過完整景氣循環的檢驗。</p>
+  <p class="cap">補充建議：A 大幅放大時，建議進一步查看應收帳款與存貨變動。應收帳款增加未必是壞事（可能是出貨大增、貨款尚未收回），存貨增加也可能是預期需求而提前備貨，需要細項才能區分。</p>
+
+  <h3><span class="no">規則二</span>B 投資紀律評估<span class="score-pill">85 分</span></h3>
+  <svg viewBox="0 0 760 330" class="chart" role="img" aria-label="">
+<line x1="62" y1="284.0" x2="742" y2="284.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="288.0" text-anchor="end" class="tick">-30</text>
+<line x1="62" y1="198.0" x2="742" y2="198.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="202.0" text-anchor="end" class="tick">-20</text>
+<line x1="62" y1="112.0" x2="742" y2="112.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="116.0" text-anchor="end" class="tick">-10</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="30.0" text-anchor="end" class="tick">0</text>
+<rect x="75.6" y="26.0" width="34.6" height="2.5" fill="#E8D48B" rx="2"/>
+<text x="92.9" y="42.5" text-anchor="middle" class="vlab">-0.29</text>
+<text x="92.9" y="314" text-anchor="middle" class="xlab">2016</text>
+<rect x="137.4" y="26.0" width="34.6" height="5.3" fill="#C4453B" rx="2"/>
+<text x="154.7" y="45.3" text-anchor="middle" class="vlab">-0.62</text>
+<text x="154.7" y="314" text-anchor="middle" class="xlab">2017</text>
+<rect x="199.2" y="26.0" width="34.6" height="16.3" fill="#C4453B" rx="2"/>
+<text x="216.5" y="56.3" text-anchor="middle" class="vlab">-1.89</text>
+<text x="216.5" y="314" text-anchor="middle" class="xlab">2018</text>
+<rect x="261.1" y="26.0" width="34.6" height="20.5" fill="#C4453B" rx="2"/>
+<text x="278.4" y="60.5" text-anchor="middle" class="vlab">-2.38</text>
+<text x="278.4" y="314" text-anchor="middle" class="xlab">2019</text>
+<rect x="322.9" y="26.0" width="34.6" height="26.0" fill="#C4453B" rx="2"/>
+<text x="340.2" y="66.0" text-anchor="middle" class="vlab">-3.02</text>
+<text x="340.2" y="314" text-anchor="middle" class="xlab">2020</text>
+<rect x="384.7" y="26.0" width="34.6" height="6.7" fill="#C4453B" rx="2"/>
+<text x="402.0" y="46.7" text-anchor="middle" class="vlab">-0.78</text>
+<text x="402.0" y="314" text-anchor="middle" class="xlab">2021</text>
+<rect x="446.5" y="26.0" width="34.6" height="106.6" fill="#C4453B" rx="2"/>
+<text x="463.8" y="146.6" text-anchor="middle" class="vlab">-12.4</text>
+<text x="463.8" y="314" text-anchor="middle" class="xlab">2022</text>
+<rect x="508.3" y="26.0" width="34.6" height="41.9" fill="#C4453B" rx="2"/>
+<text x="525.6" y="81.9" text-anchor="middle" class="vlab">-4.87</text>
+<text x="525.6" y="314" text-anchor="middle" class="xlab">2023</text>
+<rect x="570.1" y="26.0" width="34.6" height="114.4" fill="#C4453B" rx="2"/>
+<text x="587.5" y="154.4" text-anchor="middle" class="vlab">-13.3</text>
+<text x="587.5" y="314" text-anchor="middle" class="xlab">2024</text>
+<rect x="632.0" y="26.0" width="34.6" height="213.3" fill="#F2B8BE" rx="2"/>
+<text x="649.3" y="253.3" text-anchor="middle" class="vlab">-24.8</text>
+<text x="649.3" y="314" text-anchor="middle" class="xlab">2025</text>
+<rect x="693.8" y="26.0" width="34.6" height="229.6" fill="rgba(196,69,59,0.14)" stroke="#6B7A85" stroke-width="1.3" stroke-dasharray="4 3" rx="2"/>
+<text x="711.1" y="269.6" text-anchor="middle" class="vlab q">-26.7</text>
+<text x="711.1" y="314" text-anchor="middle" class="xlab q">26H1</text>
+<text x="54" y="16" text-anchor="end" class="unit">億元</text>
+</svg>
+  <p class="cap">虛線框為 2026 上半年累計，僅供參考不列入計分。</p>
+  <p><b>數字現象：</b>B 每年皆為負值（持續投資，屬正常）。2016–2021 年規模極小（−0.29 至 −3.02 億），2022 年首度放大到 −12.4 億，2024 年 −13.3 億、2025 年 −24.8 億，<b>2026 上半年 −26.7 億已超過 2025 全年</b>。</p>
+  <p class="persona">個性標籤：「量入為出、賺到才敢花」型</p>
+  <p>關鍵比較是 <b>|B| 與 A 的相對大小</b>：2025 年 |B| 24.8 億僅為 A（52.8 億）的 47%，2024 年 |B| 13.3 億為 A 的 53%——投資規模完全由本業現金流覆蓋，沒有超支。虧損年代的投資反而極度節制（|B| 多在 3 億以下），沒有「一邊虧錢一邊重砲擴產」的失控跡象。</p>
+  <p class="cap"><b>暫定評分：</b>此處僅依 B 總額判斷。B 總額可能同時包含「固定資產增減（真正的資本支出）」「子公司收購」「金融資產調度（理財）」三種性質。以本公司帳上 245 億現金推測，B 的一部分很可能是把閒置現金移往金融資產，而非產能投資——若真是如此，規則二、三的解讀都需要修正。</p>
+
+  <h3><span class="no">規則三</span>B 投資效益分析<span class="score-pill">85 分</span></h3>
+  <table>
+    <thead><tr><th>投資年度</th><th class="num">當年 B</th><th class="num">當年 A</th><th>對照年</th>
+      <th class="num">隔年 A</th><th>轉化結果</th></tr></thead>
+    <tbody><tr><th scope="row">2020</th><td class="num negv">-3.02</td><td class="num negv">-14.6</td><td class="num">2021</td><td class="num negv">-24.6</td><td class="tag-bad">惡化</td></tr>
+<tr><th scope="row">2021</th><td class="num negv">-0.78</td><td class="num negv">-24.6</td><td class="num">2022</td><td class="num negv">-15.1</td><td class="tag-ok">改善</td></tr>
+<tr><th scope="row">2022</th><td class="num negv">-12.4</td><td class="num negv">-15.1</td><td class="num">2023</td><td class="num negv">-7.1</td><td class="tag-ok">改善</td></tr>
+<tr><th scope="row">2023</th><td class="num negv">-4.87</td><td class="num negv">-7.1</td><td class="num">2024</td><td class="num posv">25.2</td><td class="tag-good">由負轉正</td></tr>
+<tr><th scope="row">2024</th><td class="num negv">-13.3</td><td class="num posv">25.2</td><td class="num">2025</td><td class="num posv">52.8</td><td class="tag-good">再成長 110%</td></tr>
+<tr><th scope="row">2025</th><td class="num negv">-24.8</td><td class="num posv">52.8</td><td class="num">26H1</td><td class="num posv">41.3</td><td class="tag-ok">半年即達前年 78%，待全年驗證</td></tr></tbody>
+  </table>
+  <p><b>數字現象：</b>用 A（營業現金流）而非 D 當對照指標，可避開業外損益干擾。2022 年投資放大到 −12.4 億後，隔年 A 由 −15.1 億改善至 −7.1 億；2023 年投資 −4.87 億後，<b>隔年 A 直接由負轉正 +25.2 億</b>；2024 年投資 −13.3 億後，2025 年 A 再成長 110%。近三次投資都在隔年見到 A 明顯轉強。</p>
+  <p class="persona">個性標籤：「投資與造血同步放大」型（非「老將自費特訓」型）</p>
+  <p>與典型的「砸錢但效果時有時無」不同，這裡的投資規模是在 A 轉正之後才跟著放大的，順序是「先賺到、再擴張」，而不是「先賭上、再祈禱」。扣分處在於因果關係尚未證實：A 的暴增更可能來自產品銷售放量，而不是這幾億元資本支出的直接產出，兩者只是時間上同時發生。</p>
+  <p class="cap"><b>必要提醒：</b>要確認投資效益，必須回到投資活動明細看「固定資產（增加）減少」這一欄，那才是廠房設備等資本支出的主要項目；其餘可能只是金融資產的買賣。目前此項評分屬暫定。</p>
+
+  <h3><span class="no">規則四</span>C 融資活動合理性<span class="score-pill low">55 分</span></h3>
+  <svg viewBox="0 0 760 360" class="chart">
+<line x1="62" y1="310.0" x2="742" y2="310.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="314.0" text-anchor="end" class="tick">-50</text>
+<line x1="62" y1="241.0" x2="742" y2="241.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="245.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="172.0" x2="742" y2="172.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="176.0" text-anchor="end" class="tick">50</text>
+<line x1="62" y1="103.0" x2="742" y2="103.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="107.0" text-anchor="end" class="tick">100</text>
+<line x1="62" y1="34.0" x2="742" y2="34.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="38.0" text-anchor="end" class="tick">150</text>
+<rect x="72.4" y="241.0" width="18.5" height="0.4" fill="#2E6F9E" rx="2"/>
+<text x="81.6" y="253.4" text-anchor="middle" class="vlab sm">-0.29</text>
+<rect x="94.9" y="183.5" width="18.5" height="57.5" fill="#B4762C" rx="2"/>
+<text x="104.2" y="178.5" text-anchor="middle" class="vlab sm">41.7</text>
+<text x="92.9" y="342" text-anchor="middle" class="xlab">2016</text>
+<rect x="134.2" y="241.0" width="18.5" height="0.9" fill="#2E6F9E" rx="2"/>
+<text x="143.5" y="253.9" text-anchor="middle" class="vlab sm">-0.62</text>
+<rect x="156.7" y="241.0" width="18.5" height="0.1" fill="#B4762C" rx="2"/>
+<text x="166.0" y="253.1" text-anchor="middle" class="vlab sm">-0.05</text>
+<text x="154.7" y="342" text-anchor="middle" class="xlab">2017</text>
+<rect x="196.0" y="241.0" width="18.5" height="2.6" fill="#2E6F9E" rx="2"/>
+<text x="205.3" y="255.6" text-anchor="middle" class="vlab sm">-1.89</text>
+<rect x="218.5" y="241.0" width="18.5" height="0.1" fill="#B4762C" rx="2"/>
+<text x="227.8" y="253.1" text-anchor="middle" class="vlab sm">-0.04</text>
+<text x="216.5" y="342" text-anchor="middle" class="xlab">2018</text>
+<rect x="257.8" y="241.0" width="18.5" height="3.3" fill="#2E6F9E" rx="2"/>
+<text x="267.1" y="256.3" text-anchor="middle" class="vlab sm">-2.38</text>
+<rect x="280.4" y="235.3" width="18.5" height="5.7" fill="#B4762C" rx="2"/>
+<text x="289.6" y="230.3" text-anchor="middle" class="vlab sm">4.11</text>
+<text x="278.4" y="342" text-anchor="middle" class="xlab">2019</text>
+<rect x="319.6" y="241.0" width="18.5" height="4.2" fill="#2E6F9E" rx="2"/>
+<text x="328.9" y="257.2" text-anchor="middle" class="vlab sm">-3.02</text>
+<rect x="342.2" y="191.7" width="18.5" height="49.3" fill="#B4762C" rx="2"/>
+<text x="351.5" y="186.7" text-anchor="middle" class="vlab sm">35.7</text>
+<text x="340.2" y="342" text-anchor="middle" class="xlab">2020</text>
+<rect x="381.5" y="241.0" width="18.5" height="1.1" fill="#2E6F9E" rx="2"/>
+<text x="390.7" y="254.1" text-anchor="middle" class="vlab sm">-0.78</text>
+<rect x="404.0" y="202.2" width="18.5" height="38.8" fill="#B4762C" rx="2"/>
+<text x="413.3" y="197.2" text-anchor="middle" class="vlab sm">28.1</text>
+<text x="402.0" y="342" text-anchor="middle" class="xlab">2021</text>
+<rect x="443.3" y="241.0" width="18.5" height="17.1" fill="#2E6F9E" rx="2"/>
+<text x="452.5" y="270.1" text-anchor="middle" class="vlab sm">-12.4</text>
+<rect x="465.8" y="108.8" width="18.5" height="132.2" fill="#B4762C" rx="2"/>
+<text x="475.1" y="103.8" text-anchor="middle" class="vlab sm">95.8</text>
+<text x="463.8" y="342" text-anchor="middle" class="xlab">2022</text>
+<rect x="505.1" y="241.0" width="18.5" height="6.7" fill="#2E6F9E" rx="2"/>
+<text x="514.4" y="259.7" text-anchor="middle" class="vlab sm">-4.87</text>
+<rect x="527.6" y="96.1" width="18.5" height="144.9" fill="#B4762C" rx="2"/>
+<text x="536.9" y="91.1" text-anchor="middle" class="vlab sm">105</text>
+<text x="525.6" y="342" text-anchor="middle" class="xlab">2023</text>
+<rect x="566.9" y="241.0" width="18.5" height="18.4" fill="#2E6F9E" rx="2"/>
+<text x="576.2" y="271.4" text-anchor="middle" class="vlab sm">-13.3</text>
+<rect x="589.5" y="241.0" width="18.5" height="2.2" fill="#B4762C" rx="2"/>
+<text x="598.7" y="255.2" text-anchor="middle" class="vlab sm">-1.63</text>
+<text x="587.5" y="342" text-anchor="middle" class="xlab">2024</text>
+<rect x="628.7" y="241.0" width="18.5" height="34.2" fill="#2E6F9E" rx="2"/>
+<text x="638.0" y="287.2" text-anchor="middle" class="vlab sm">-24.8</text>
+<rect x="651.3" y="241.0" width="18.5" height="6.9" fill="#B4762C" rx="2"/>
+<text x="660.5" y="259.9" text-anchor="middle" class="vlab sm">-5</text>
+<text x="649.3" y="342" text-anchor="middle" class="xlab">2025</text>
+<rect x="690.5" y="241.0" width="18.5" height="36.8" fill="#2E6F9E" fill-opacity="0.16" stroke="#6B7A85" stroke-width="1.2" stroke-dasharray="4 3" rx="2"/>
+<text x="699.8" y="289.8" text-anchor="middle" class="vlab sm q">-26.7</text>
+<rect x="713.1" y="240.0" width="18.5" height="1.0" fill="#B4762C" fill-opacity="0.16" stroke="#6B7A85" stroke-width="1.2" stroke-dasharray="4 3" rx="2"/>
+<text x="722.4" y="235.0" text-anchor="middle" class="vlab sm q">0.69</text>
+<text x="711.1" y="342" text-anchor="middle" class="xlab q">26H1</text>
+<text x="54" y="20" text-anchor="end" class="unit">億元</text>
+<rect x="62" y="8" width="11" height="11" fill="#2E6F9E" rx="2"/>
+<text x="79" y="18" class="leg">投資活動 B</text>
+<rect x="157" y="8" width="11" height="11" fill="#B4762C" rx="2"/>
+<text x="174" y="18" class="leg">融資活動 C</text>
+</svg>
+  <div class="legend-note"><span><span class="sw" style="background:#2E6F9E"></span>投資活動 B</span>
+    <span><span class="sw" style="background:#B4762C"></span>融資活動 C</span>
+    <span>虛線框為 2026 上半年累計，僅供參考不列入計分</span></div>
+  <p><b>數字現象：</b>2016–2023 年間，C 幾乎年年為正且金額龐大，2022 年 +95.8 億、2023 年 +105 億，兩年合計吸收超過 200 億元外部資金。<b>2024 年起 C 轉為負值（−1.63、−5 億）</b>，2026 上半年僅 +0.69 億，接近打平。</p>
+
+  <p><b>最高警戒訊號檢查（A 為負 ＋ C 為正或僅小幅負值）：</b></p>
+  <table>
+    <thead><tr><th>年度</th><th class="num">A 營業活動</th><th class="num">C 融資活動</th>
+      <th class="num">B 投資活動</th><th>判定</th></tr></thead>
+    <tbody><tr class="warn"><th scope="row">2016</th><td class="num negv">-6.57</td><td class="num posv">+41.7</td><td class="num negv">-0.29</td><td>最高警戒組合</td></tr>
+<tr class="warn"><th scope="row">2019</th><td class="num negv">-9.45</td><td class="num posv">+4.11</td><td class="num negv">-2.38</td><td>最高警戒組合</td></tr>
+<tr class="warn"><th scope="row">2020</th><td class="num negv">-14.6</td><td class="num posv">+35.7</td><td class="num negv">-3.02</td><td>最高警戒組合</td></tr>
+<tr class="warn"><th scope="row">2021</th><td class="num negv">-24.6</td><td class="num posv">+28.1</td><td class="num negv">-0.78</td><td>最高警戒組合</td></tr>
+<tr class="warn"><th scope="row">2022</th><td class="num negv">-15.1</td><td class="num posv">+95.8</td><td class="num negv">-12.4</td><td>最高警戒組合</td></tr>
+<tr class="warn"><th scope="row">2023</th><td class="num negv">-7.1</td><td class="num posv">+105</td><td class="num negv">-4.87</td><td>最高警戒組合</td></tr></tbody>
+  </table>
+  <p class="cap">10 個完整年度中有 <b>6 年</b>命中最高警戒組合，屬於重複出現的模式，而非單一年度特例——這是本次評分最主要的扣分來源。</p>
+  <p class="persona">個性標籤：「靠外部輸血養大，近兩年才真正斷奶」型</p>
+  <p>兩點必須並陳：其一，這 6 年的 B 規模都很小（多在 3 億以下，僅 2022 年 −12.4 億），所以並不是典型的「借錢去投資（寅吃卯糧）」，而是<b>「募資來支應本業虧損」</b>——性質不同，但同樣代表本業無法自給。其二，這個模式<b>在 2024 年已經中止</b>，近兩年 C 轉為淨流出，最新的資金結構明顯優於歷史。</p>
+  <div class="key alert" style="margin-top:14px">
+    <b>此項評分為暫定，必須看融資活動明細才能定案。</b>若 2022、2023 年的 C 正值主要來自<b>現金增資（股權募資）</b>，風險等級明顯低於 100% 依賴短期借款、應付短期票券或公司債湊出的正值；若主要來自純舉債，55 分還算給得寬鬆。目前無法區分，故不能把這 6 年一律視為同等警訊。<br>
+    另建議一併查核法說會揭露的季度槓桿指標（如淨金融負債／EBITDA）——年度加總的 C 很容易掩蓋單一季度內先舉債、後迅速償還的過程，只看年度數字會低估風險曾經達到的高峰。
+  </div>
+
+  <h3><span class="no">規則五</span>A &gt; D 現金流品質<span class="score-pill low">10 分</span></h3>
+  <table>
+    <thead><tr><th>年度</th><th class="num">A 營業活動</th><th class="num">D 稅前淨利</th><th>判定</th><th>依據</th></tr></thead>
+    <tbody><tr><th scope="row">2016</th><td class="num negv">-6.57</td><td class="num negv">-8.45</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2017</th><td class="num negv">-7.9</td><td class="num negv">-8.72</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2018</th><td class="num negv">-8.27</td><td class="num negv">-10.4</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2019</th><td class="num negv">-9.45</td><td class="num negv">-8.42</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2020</th><td class="num negv">-14.6</td><td class="num negv">-19.5</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2021</th><td class="num negv">-24.6</td><td class="num negv">-28.1</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2022</th><td class="num negv">-15.1</td><td class="num negv">-18.4</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2023</th><td class="num negv">-7.1</td><td class="num negv">-9.87</td><td><span class="fail">不通過</span></td><td class="why">A 為負值</td></tr>
+<tr><th scope="row">2024</th><td class="num posv">25.2</td><td class="num posv">29.9</td><td><span class="fail">不通過</span></td><td class="why">A ≤ D</td></tr>
+<tr><th scope="row">2025</th><td class="num posv">52.8</td><td class="num posv">49.8</td><td><span class="pass">通過</span></td><td class="why">A &gt; D</td></tr></tbody>
+  </table>
+  <p class="cap">採嚴格二分法：A 為負值一律不通過，不論 A 是否大於當年的 D。通過年數 1 ÷ 10 = <b>10 分</b>。</p>
+  <p><b>數字現象：</b>2016–2023 年 A 全為負值，直接不通過（雖然多數年份 A 的虧損金額小於稅前淨利虧損，但依規則不計）。<b>2024 年是關鍵：A 為 25.2 億，仍小於稅前淨利 29.9 億</b>，代表當年帳上賺的錢還沒有全數轉為現金。<b>2025 年 A（52.8 億）首度超越 D（49.8 億）</b>，2026 上半年 A 41.3 億對 D 55.3 億則又落後（單期，不計分）。</p>
+  <p class="persona">個性標籤：「剛開始收現金，收款效率還在磨合」型</p>
+  <p>這個 10 分要看得懂：它反映的是<b>十年歷史的累積結果</b>，而不是當下體質。以趨勢看，2025 年已首度通過，是正向訊號；但 2026 上半年 A 又低於 D 約 14 億，落差不算小，值得追蹤是否來自應收帳款或存貨堆高。這也是本檔六項評分中唯一的重傷區，把總分從 80 分以上拉到 68 分。</p>
+
+  <h3><span class="no">規則六</span>E 期末現金餘額穩定性<span class="score-pill">90 分</span></h3>
+  <svg viewBox="0 0 760 330" class="chart" role="img" aria-label="">
+<line x1="62" y1="284.0" x2="742" y2="284.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="288.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="232.4" x2="742" y2="232.4" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="236.4" text-anchor="end" class="tick">50</text>
+<line x1="62" y1="180.8" x2="742" y2="180.8" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="184.8" text-anchor="end" class="tick">100</text>
+<line x1="62" y1="129.2" x2="742" y2="129.2" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="133.2" text-anchor="end" class="tick">150</text>
+<line x1="62" y1="77.6" x2="742" y2="77.6" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="81.6" text-anchor="end" class="tick">200</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">250</text>
+<rect x="75.6" y="242.3" width="34.6" height="41.7" fill="#0F6E5C" rx="2"/>
+<text x="92.9" y="236.3" text-anchor="middle" class="vlab">40.4</text>
+<text x="92.9" y="314" text-anchor="middle" class="xlab">2016</text>
+<rect x="137.4" y="251.1" width="34.6" height="32.9" fill="#0F6E5C" rx="2"/>
+<text x="154.7" y="245.1" text-anchor="middle" class="vlab">31.9</text>
+<text x="154.7" y="314" text-anchor="middle" class="xlab">2017</text>
+<rect x="199.2" y="261.6" width="34.6" height="22.4" fill="#0F6E5C" rx="2"/>
+<text x="216.5" y="255.6" text-anchor="middle" class="vlab">21.7</text>
+<text x="216.5" y="314" text-anchor="middle" class="xlab">2018</text>
+<rect x="261.1" y="269.6" width="34.6" height="14.4" fill="#F2B8BE" rx="2"/>
+<text x="278.4" y="263.6" text-anchor="middle" class="vlab">14</text>
+<text x="278.4" y="314" text-anchor="middle" class="xlab">2019</text>
+<rect x="322.9" y="251.0" width="34.6" height="33.0" fill="#0F6E5C" rx="2"/>
+<text x="340.2" y="245.0" text-anchor="middle" class="vlab">32</text>
+<text x="340.2" y="314" text-anchor="middle" class="xlab">2020</text>
+<rect x="384.7" y="248.4" width="34.6" height="35.6" fill="#0F6E5C" rx="2"/>
+<text x="402.0" y="242.4" text-anchor="middle" class="vlab">34.5</text>
+<text x="402.0" y="314" text-anchor="middle" class="xlab">2021</text>
+<rect x="446.5" y="177.7" width="34.6" height="106.3" fill="#0F6E5C" rx="2"/>
+<text x="463.8" y="171.7" text-anchor="middle" class="vlab">103</text>
+<text x="463.8" y="314" text-anchor="middle" class="xlab">2022</text>
+<rect x="508.3" y="80.7" width="34.6" height="203.3" fill="#0F6E5C" rx="2"/>
+<text x="525.6" y="74.7" text-anchor="middle" class="vlab">197</text>
+<text x="525.6" y="314" text-anchor="middle" class="xlab">2023</text>
+<rect x="570.1" y="66.2" width="34.6" height="217.8" fill="#0F6E5C" rx="2"/>
+<text x="587.5" y="60.2" text-anchor="middle" class="vlab">211</text>
+<text x="587.5" y="314" text-anchor="middle" class="xlab">2024</text>
+<rect x="632.0" y="49.7" width="34.6" height="234.3" fill="#E8D48B" rx="2"/>
+<text x="649.3" y="43.7" text-anchor="middle" class="vlab">227</text>
+<text x="649.3" y="314" text-anchor="middle" class="xlab">2025</text>
+<rect x="693.8" y="31.2" width="34.6" height="252.8" fill="rgba(15,110,92,0.14)" stroke="#6B7A85" stroke-width="1.3" stroke-dasharray="4 3" rx="2"/>
+<text x="711.1" y="25.2" text-anchor="middle" class="vlab q">245</text>
+<text x="711.1" y="314" text-anchor="middle" class="xlab q">26H1</text>
+<text x="54" y="16" text-anchor="end" class="unit">億元</text>
+</svg>
+  <p class="cap">虛線框為 2026 上半年累計，僅供參考不列入計分。</p>
+  <p><b>數字現象：</b>2016–2019 年一路下滑（40.4 → 14 億），是燒錢見底的階段；2020 年起連續七年上升，<b>2022 年跳升至 103 億、2023 年 197 億</b>（對應當年大額融資），此後即使 C 轉為負值，餘額仍靠本業續增至 2025 年 <b>227 億</b>、2026 上半年 245 億。</p>
+  <p class="persona">個性標籤：「先見底、再越存越厚」型</p>
+  <p>最有價值的細節是 2024–2026：這三期現金餘額的增加<b>不再依賴融資</b>（C 為 −1.63、−5、+0.69），完全由營業活動堆出來，這是與 2022–2023 年「靠募資堆高現金」本質不同的成長。扣分僅來自 2016–2019 年的下滑段落，長期方向明確向上。</p>
+  <p class="cap">後續提醒：若之後取得官方財報（法說會簡報、季報資產負債表）中的「現金及約當現金」，請與此處的期末餘額互相核對。兩者若有落差，通常是口徑差異（合併基礎、涵蓋範圍、抓取時點），屆時將如實揭露，不會回頭更動本步驟的盲測評分。</p>
+
+  <h3><span class="no">SCORE</span>總評分與關卡判斷</h3>
+  <table>
+    <thead><tr><th>規則</th><th>項目</th><th class="num">分數</th><th>視覺化</th></tr></thead>
+    <tbody><tr><th scope="row">規則一</th><td>A 逐年成長趨勢</td><td class="num ">85</td><td><div class="meter"><i style="width:85%"></i></div></td></tr>
+<tr><th scope="row">規則二</th><td>B 投資紀律</td><td class="num ">85</td><td><div class="meter"><i style="width:85%"></i></div></td></tr>
+<tr><th scope="row">規則三</th><td>B 投資效益</td><td class="num ">85</td><td><div class="meter"><i style="width:85%"></i></div></td></tr>
+<tr><th scope="row">規則四</th><td>C 融資合理性</td><td class="num negv">55</td><td><div class="meter"><i style="width:55%"></i></div></td></tr>
+<tr><th scope="row">規則五</th><td>A &gt; D 現金流品質</td><td class="num negv">10</td><td><div class="meter"><i style="width:10%"></i></div></td></tr>
+<tr><th scope="row">規則六</th><td>E 期末現金穩定性</td><td class="num ">90</td><td><div class="meter"><i style="width:90%"></i></div></td></tr></tbody>
+  </table>
+  <div class="total">
+    <div class="big">68.3</div>
+    <div class="lv">良好（60–79）</div>
+    <p class="cap" style="margin-top:8px">評分標準：優秀 ≥80｜良好 60–79｜需觀察 &lt;60</p>
+  </div>
+  <div class="key" style="margin-top:20px">
+    <b>關卡判斷：通過，可以繼續往下看基本面。</b>總分 68.3 分（≥60），且<b>並未出現「A 為負 ＋ B 大幅負值 ＋ C 為正」的三重疊加訊號</b>——歷史上雖有 6 年 A 負、C 正，但那幾年 B 規模都很小，屬於「募資養虧損」而非「借錢重砲擴產」；且該模式自 2024 年起已中止。<br>
+    <b>唯二需要帶著往下看的問號：</b>①2024 與 2026 上半年 A 仍小於 D，現金入帳落後帳面獲利；②2022–2023 年逾 200 億的融資到底是增資還是舉債。
+  </div>
+
+  <div class="key alert" style="margin-top:18px">
+    <b>⚠ 本節評分已被後續明細校正取代。</b>上表為僅依 B、C 總額所做的初評（68.3 分）。使用者其後提供了投資／融資活動明細，規則二、三、四全部重新計分並上修，<b>總分修正為 72.2 分</b>——請見下一節「第 1 步補充：投資／融資活動明細校正」。本節保留原始盲測結果不刪改，以便對照校正前後的差異。
+  </div>
+
+  <div class="snap-note">
+    <b>資料來源與限制：</b>本報告全部數字來自使用者提供的 Goodinfo 現金流量表截圖，<b>非本次搜尋所得</b>，亦未與公開資訊觀測站官方財報交叉驗證。<br>
+    規則二、三、四目前僅依 B、C 總額判斷，<b>投資活動明細與融資活動明細尚未取得，這三項評分屬暫定</b>，建議補充後校正。<br>
+    26H1 一列為 2026 上半年累計數，全程標示為「僅供參考、不列入計分」。
+  </div>
+</section>
+
+
+<section id="step1b">
+  <p class="steptag">第 1 步補充：投資／融資活動明細校正</p>
+  <h2>明細到手，三項暫定評分定案</h2>
+
+  <div class="key">
+    <b>最重要的一個答案：2022–2023 年那超過 200 億元的融資，幾乎全部是「現金增資」，不是舉債。</b>2022 年現金增資 86.47 億元、2023 年 138.8 億元，合計 <b>225.27 億元</b>；同期借款不但沒有增加，2023 年還把短期借款<b>淨償還 9.73 億元</b>。這讓規則四從 55 分上修到 <b>70 分</b>。
+  </div>
+
+  <div class="key alert">
+    <b>第二個答案沒那麼舒服：B 的總額嚴重誤導了真實投資規模，兩個方向都有。</b>2022 年 B 總額 −12.43 億元，但真正花在廠房設備的只有 <span class="negv">3.12 億元</span>——其餘是買金融資產；2023 年 B 總額只有 −4.87 億元，真實資本支出卻高達 <span class="negv">12.86 億元</span>——差額被「金融資產到期還本 +9.7 億」蓋住了。<b>只看 B 總額會同時高估與低估投資，這正是第一步堅持要明細的理由。</b>
+  </div>
+
+  <h3><span class="no">1B-1</span>投資活動拆解</h3>
+  <table>
+    <thead><tr><th>年度</th><th class="num">B 總額</th><th class="num">固定資產</th><th class="num">預付工程及設備款</th><th class="num">真實資本支出</th><th class="num">金融資產淨額</th><th class="num">子公司收購</th></tr></thead>
+    <tbody><tr><th scope="row">2022</th><td class="num negv">-12.43</td><td class="num negv">-2.87</td><td class="num negv">-0.25</td><td class="num negv"><b>-3.12</b></td><td class="num negv">-9.89</td><td class="num">—</td></tr>
+<tr><th scope="row">2023</th><td class="num negv">-4.87</td><td class="num negv">-12.0</td><td class="num negv">-0.86</td><td class="num negv"><b>-12.86</b></td><td class="num posv">8.74</td><td class="num">—</td></tr>
+<tr><th scope="row">2024</th><td class="num negv">-13.35</td><td class="num negv">-7.54</td><td class="num negv">-1.08</td><td class="num negv"><b>-8.62</b></td><td class="num negv">-4.23</td><td class="num">—</td></tr>
+<tr><th scope="row">2025</th><td class="num negv">-24.75</td><td class="num negv">-15.96</td><td class="num negv">-3.15</td><td class="num negv"><b>-19.11</b></td><td class="num negv">-4.4</td><td class="num">—</td></tr></tbody>
+  </table>
+  <p class="cap">單位：億元。真實資本支出＝固定資產＋預付工程及設備款（<span class="calc">推算</span>）。金融資產淨額為「透過其他綜合損益按公允價值衡量」與「按攤銷後成本衡量」之增減及到期還本合計（<span class="calc">推算</span>）。</p>
+  <svg viewBox="0 0 760 330" class="chart">
+<line x1="62" y1="280.0" x2="742" y2="280.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="284.0" text-anchor="end" class="tick">-25</text>
+<line x1="62" y1="230.8" x2="742" y2="230.8" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="234.8" text-anchor="end" class="tick">-20</text>
+<line x1="62" y1="181.6" x2="742" y2="181.6" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="185.6" text-anchor="end" class="tick">-15</text>
+<line x1="62" y1="132.4" x2="742" y2="132.4" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="136.4" text-anchor="end" class="tick">-10</text>
+<line x1="62" y1="83.2" x2="742" y2="83.2" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="87.2" text-anchor="end" class="tick">-5</text>
+<line x1="62" y1="34.0" x2="742" y2="34.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="38.0" text-anchor="end" class="tick">0</text>
+<rect x="123.0" y="34.0" width="22.0" height="30.7" fill="#2E6F9E" rx="2"/>
+<text x="134.0" y="76.7" text-anchor="middle" class="vlab sm">-3.12</text>
+<rect x="149.0" y="34.0" width="22.0" height="122.3" fill="#B4762C" rx="2"/>
+<text x="160.0" y="168.3" text-anchor="middle" class="vlab sm">-12.4</text>
+<text x="147.0" y="312" text-anchor="middle" class="xlab">2022</text>
+<rect x="293.0" y="34.0" width="22.0" height="126.5" fill="#2E6F9E" rx="2"/>
+<text x="304.0" y="172.5" text-anchor="middle" class="vlab sm">-12.9</text>
+<rect x="319.0" y="34.0" width="22.0" height="47.9" fill="#B4762C" rx="2"/>
+<text x="330.0" y="93.9" text-anchor="middle" class="vlab sm">-4.87</text>
+<text x="317.0" y="312" text-anchor="middle" class="xlab">2023</text>
+<rect x="463.0" y="34.0" width="22.0" height="84.8" fill="#2E6F9E" rx="2"/>
+<text x="474.0" y="130.8" text-anchor="middle" class="vlab sm">-8.62</text>
+<rect x="489.0" y="34.0" width="22.0" height="131.4" fill="#B4762C" rx="2"/>
+<text x="500.0" y="177.4" text-anchor="middle" class="vlab sm">-13.3</text>
+<text x="487.0" y="312" text-anchor="middle" class="xlab">2024</text>
+<rect x="633.0" y="34.0" width="22.0" height="188.0" fill="#2E6F9E" rx="2"/>
+<text x="644.0" y="234.0" text-anchor="middle" class="vlab sm">-19.1</text>
+<rect x="659.0" y="34.0" width="22.0" height="243.5" fill="#B4762C" rx="2"/>
+<text x="670.0" y="289.5" text-anchor="middle" class="vlab sm">-24.8</text>
+<text x="657.0" y="312" text-anchor="middle" class="xlab">2025</text>
+<text x="54" y="20" text-anchor="end" class="unit">億元</text>
+<rect x="62" y="8" width="11" height="11" fill="#2E6F9E" rx="2"/>
+<text x="79" y="18" class="leg">真實資本支出（固定資產＋預付設備款）</text>
+<rect x="157" y="8" width="11" height="11" fill="#B4762C" rx="2"/>
+<text x="174" y="18" class="leg">B 投資活動總額</text>
+</svg>
+  <div class="legend-note"><span><span class="sw" style="background:#2E6F9E"></span>真實資本支出</span>
+    <span><span class="sw" style="background:#B4762C"></span>B 投資活動總額</span></div>
+  <p><b>兩根長條在 2022 與 2023 幾乎完全錯開，這張圖本身就是結論。</b>2022 年 B 總額看起來投資很多（−12.43），實際蓋廠只花 3.12 億元；2023 年 B 總額看起來幾乎沒投資（−4.87），實際蓋廠花了 12.86 億元。到了 2024、2025 年，兩者才逐漸靠攏——因為現金部位變大後，金融資產調度的比重相對下降。</p>
+
+  <div class="key" style="margin-top:14px">
+    <b>還有一個意外發現，直接修正了第 3 步的推論：「子公司之（收購）處分」在 2022–2025 全部是空白。</b>也就是說，<span class="negv">這四年的 B 完全沒有併購成分</span>。我在第 3 步深入分析時擔心「B 裡混了併購、會讓規則三的效益被高估」——就 2022–2025 而言<b>這個擔憂不成立</b>，FORUS 收購（加幣 5,000 萬、2026/04 決議）要到 <b>2026 年度</b>才會出現在這一列。第 3 步的那段推論適用範圍應限縮在 2026 年，不適用於本次計分的 2022–2025。
+  </div>
+
+  <h3><span class="no">1B-2</span>投資紀律重算：規則二 85 → 90 分</h3>
+  <table>
+    <thead><tr><th>年度</th><th class="num">真實資本支出</th><th class="num">A 營業活動</th><th class="num">資本支出／A</th></tr></thead>
+    <tbody><tr><th scope="row">2022</th><td class="num negv">-3.12</td><td class="num negv">-15.05</td><td class="num">—（A 為負）</td></tr>
+<tr><th scope="row">2023</th><td class="num negv">-12.86</td><td class="num negv">-7.1</td><td class="num">—（A 為負）</td></tr>
+<tr><th scope="row">2024</th><td class="num negv">-8.62</td><td class="num posv">25.25</td><td class="num">34%</td></tr>
+<tr><th scope="row">2025</th><td class="num negv">-19.11</td><td class="num posv">52.78</td><td class="num">36%</td></tr></tbody>
+  </table>
+  <p><b>轉盈之後的兩年，資本支出穩定落在營業現金流的三分之一左右</b>（2024 年 34%、2025 年 36%），且比例幾乎沒有失控跡象。虧損年代的資本支出也相當節制——2022 年只有 3.12 億元。<b>沒有併購混入、沒有超出本業現金流的擴張，這是教科書級的投資紀律。</b>上修至 <b>90 分</b>，並由「暫定」轉為<b>定案</b>。</p>
+  <p class="cap">扣掉的 10 分：2025 年資本支出年增 122%（8.62 → 19.11 億元），且竹北廠、波多黎各廠都還在興建中，2026–2027 年的投資強度會繼續上升，紀律能否維持仍待觀察。</p>
+
+  <h3><span class="no">1B-3</span>投資效益重算：規則三 85 → 88 分</h3>
+  <table>
+    <thead><tr><th>投資年度</th><th class="num">真實資本支出</th><th class="num">當年 A</th><th class="num">隔年 A</th><th>轉化結果</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2022</th><td class="num negv">-3.12</td><td class="num negv">-15.05</td><td class="num negv">-7.1</td><td class="tag-ok">虧損收斂 53%</td></tr>
+      <tr class="warn"><th scope="row">2023</th><td class="num negv">-12.86</td><td class="num negv">-7.1</td><td class="num posv">+25.25</td><td class="tag-good">由負轉正</td></tr>
+      <tr><th scope="row">2024</th><td class="num negv">-8.62</td><td class="num posv">25.25</td><td class="num posv">+52.78</td><td class="tag-good">再成長 109%</td></tr>
+      <tr><th scope="row">2025</th><td class="num negv">-19.11</td><td class="num posv">52.78</td><td class="num">26H1 41.3</td><td class="tag-ok">待全年驗證</td></tr>
+    </tbody>
+  </table>
+  <p><b>用真實資本支出重算後，因果關係比原先合理得多。</b>原本只看 B 總額，2023 年僅投資 4.87 億元卻換來隔年 A 從 −7.1 億跳到 +25.25 億，效益好得可疑；現在知道 2023 年實際投了 <b>12.86 億元</b>（對應台中廠第二條產線等產能建置），隔年產能開出、A 轉正，<b>時序與規模都說得通</b>。上修至 <b>88 分</b>，由「暫定」轉為<b>定案</b>。</p>
+  <p class="cap">為什麼不給更高：A 的轉正主因仍是產品在美國等市場的銷售放量與藥價因素，產能投資是<b>必要條件而非充分條件</b>。把 A 的暴增全部歸功於這十幾億元的資本支出，會高估投資效益。</p>
+
+  <h3><span class="no">1B-4</span>融資結構拆解：規則四 55 → 70 分</h3>
+  <table>
+    <thead><tr><th>年度</th><th class="num">C 總額</th><th class="num">現金增資（股權）</th><th class="num">借款淨額（債權）</th><th class="num">庫藏股買回</th><th class="num">發放現金股利</th></tr></thead>
+    <tbody><tr><th scope="row">2022</th><td class="num posv">95.79</td><td class="num posv">86.47</td><td class="num posv">9.62</td><td class="num">—</td><td class="num">—</td></tr>
+<tr><th scope="row">2023</th><td class="num posv">104.5</td><td class="num posv">138.8</td><td class="num negv">-9.85</td><td class="num">-27.18</td><td class="num">—</td></tr>
+<tr><th scope="row">2024</th><td class="num negv">-1.63</td><td class="num posv">—</td><td class="num negv">-0.33</td><td class="num">—</td><td class="num">—</td></tr>
+<tr><th scope="row">2025</th><td class="num negv">-5.0</td><td class="num posv">—</td><td class="num negv">-0.12</td><td class="num">—</td><td class="num">-3.66</td></tr></tbody>
+  </table>
+  <p class="cap">單位：億元。借款淨額＝短期借款增減＋長期借款增減（<span class="calc">推算</span>）。租賃本金、員工認股權等小額項目未列入表格。</p>
+  <svg viewBox="0 0 760 320" class="chart">
+<line x1="62" y1="270.0" x2="742" y2="270.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="274.0" text-anchor="end" class="tick">-50</text>
+<line x1="62" y1="211.0" x2="742" y2="211.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="215.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="152.0" x2="742" y2="152.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="156.0" text-anchor="end" class="tick">50</text>
+<line x1="62" y1="93.0" x2="742" y2="93.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="97.0" text-anchor="end" class="tick">100</text>
+<line x1="62" y1="34.0" x2="742" y2="34.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="38.0" text-anchor="end" class="tick">150</text>
+<rect x="123.0" y="109.0" width="22.0" height="102.0" fill="#2E6F9E" rx="2"/>
+<text x="134.0" y="104.0" text-anchor="middle" class="vlab sm">86.5</text>
+<rect x="149.0" y="199.6" width="22.0" height="11.4" fill="#B4762C" rx="2"/>
+<text x="160.0" y="194.6" text-anchor="middle" class="vlab sm">9.62</text>
+<text x="147.0" y="302" text-anchor="middle" class="xlab">2022</text>
+<rect x="293.0" y="47.2" width="22.0" height="163.8" fill="#2E6F9E" rx="2"/>
+<text x="304.0" y="42.2" text-anchor="middle" class="vlab sm">139</text>
+<rect x="319.0" y="211.0" width="22.0" height="11.6" fill="#B4762C" rx="2"/>
+<text x="330.0" y="234.6" text-anchor="middle" class="vlab sm">-9.85</text>
+<text x="317.0" y="302" text-anchor="middle" class="xlab">2023</text>
+<rect x="463.0" y="211.0" width="22.0" height="0.0" fill="#2E6F9E" rx="2"/>
+<text x="474.0" y="206.0" text-anchor="middle" class="vlab sm">0</text>
+<rect x="489.0" y="211.0" width="22.0" height="0.4" fill="#B4762C" rx="2"/>
+<text x="500.0" y="223.4" text-anchor="middle" class="vlab sm">-0.33</text>
+<text x="487.0" y="302" text-anchor="middle" class="xlab">2024</text>
+<rect x="633.0" y="211.0" width="22.0" height="0.0" fill="#2E6F9E" rx="2"/>
+<text x="644.0" y="206.0" text-anchor="middle" class="vlab sm">0</text>
+<rect x="659.0" y="211.0" width="22.0" height="0.1" fill="#B4762C" rx="2"/>
+<text x="670.0" y="223.1" text-anchor="middle" class="vlab sm">-0.12</text>
+<text x="657.0" y="302" text-anchor="middle" class="xlab">2025</text>
+<text x="54" y="20" text-anchor="end" class="unit">億元</text>
+<rect x="62" y="8" width="11" height="11" fill="#2E6F9E" rx="2"/>
+<text x="79" y="18" class="leg">現金增資（股權）</text>
+<rect x="157" y="8" width="11" height="11" fill="#B4762C" rx="2"/>
+<text x="174" y="18" class="leg">借款淨額（債權）</text>
+</svg>
+  <div class="legend-note"><span><span class="sw" style="background:#2E6F9E"></span>現金增資（股權）</span>
+    <span><span class="sw" style="background:#B4762C"></span>借款淨額（債權）</span></div>
+  <p><b>這張圖回答了第一步留下的最大問號。</b>2022–2023 年的巨額 C 正值，藍色（股權）幾乎占滿整根，橘色（債權）小到看不見甚至為負。具體來說：</p>
+  <table>
+    <thead><tr><th>觀察</th><th>數字</th><th>意義</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">兩年股權募資合計</th><td class="num posv">225.27 億元</td><td>2022 年 86.47 ＋ 2023 年 138.8</td></tr>
+      <tr><th scope="row">同期借款變化</th><td class="num">2022 ＋9.62／2023 −9.85 億元</td><td>2022 年借的錢，2023 年<b>幾乎原數還清</b></td></tr>
+      <tr><th scope="row">長期借款</th><td class="num negv">每年固定 −0.12 億元</td><td>四年持續償還，沒有新增長期債務</td></tr>
+      <tr><th scope="row">2025 年首度發放現金股利</th><td class="num negv">−3.66 億元</td><td>從「向市場拿錢」轉為「回饋股東」的分水嶺</td></tr>
+    </tbody>
+  </table>
+  <div class="key" style="margin-top:14px">
+    <b>為什麼上修到 70 分而不是更高：</b>股權募資確實比舉債安全得多——<b>沒有到期壓力、沒有利息負擔、沒有違約風險</b>，公司在虧損期不會被債權人逼到牆角。但它<span class="negv">不是沒有代價，代價是股本稀釋</span>：股本從 2016 年的 20.4 億元一路增加到 2025 年的 37 億元、2026 年的 42.2 億元。<b>老股東每一股的權益被反覆攤薄，這正好呼應第 2 步發現的配股稀釋，以及第 5 步指出的「2027 年 EPS 可能被再稀釋一成」。</b><br>
+    另外，「A 為負 ＋ C 為正」重複 6 年仍是事實，代表本業長期無法自給；而 2016、2019–2021 這四年的融資明細<b>本次截圖未涵蓋（僅提供 2022–2025）</b>，無法確認是否同樣以股權為主。基於這兩點，70 分而非 80 分以上。
+  </div>
+  <p class="cap"><b>一個中性但值得記下的細節：</b>2023 年公司一邊現金增資 138.8 億元、一邊買回庫藏股 27.18 億元，同年員工執行認股權 4.54 億元。庫藏股買回多用於員工獎酬或穩定股價，淨額仍是大幅募資，但「同時大量募資又買回自家股票」的組合，在資金運用效率上並不理想。</p>
+
+  <h3><span class="no">1B-5</span>校正後的六大規則總分</h3>
+  <table>
+    <thead><tr><th>規則</th><th>項目</th><th class="num">初評（總額）</th><th class="num">校正後（明細）</th><th>狀態</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">規則一</th><td>A 逐年成長趨勢</td><td class="num">85</td><td class="num">85</td><td>不變</td></tr>
+      <tr><th scope="row">規則二</th><td>B 投資紀律</td><td class="num">85</td><td class="num posv">90 ▲</td><td><span class="pass">定案</span></td></tr>
+      <tr><th scope="row">規則三</th><td>B 投資效益</td><td class="num">85</td><td class="num posv">88 ▲</td><td><span class="pass">定案</span></td></tr>
+      <tr class="warn"><th scope="row">規則四</th><td>C 融資合理性</td><td class="num negv">55</td><td class="num posv">70 ▲</td><td><span class="pass">定案</span></td></tr>
+      <tr><th scope="row">規則五</th><td>A &gt; D 現金流品質</td><td class="num negv">10</td><td class="num negv">10</td><td>不變</td></tr>
+      <tr><th scope="row">規則六</th><td>E 期末現金穩定性</td><td class="num">90</td><td class="num">90</td><td>不變</td></tr>
+    </tbody>
+  </table>
+  <div class="total">
+    <div class="big">72.2</div>
+    <div class="lv">良好（60–79）　<span style="font-size:14px;color:#65767F">原 68.3 分</span></div><p class="cap" style="margin-top:6px"><b>此分數其後再度更新：</b>季度與 2020–2021 融資明細到手後，規則四由 70 上修至 75，總分為 <b>73.0</b>，請見下一節「第 1 步再校正」。</p>
+    <p class="cap" style="margin-top:8px">評分標準：優秀 ≥80｜良好 60–79｜需觀察 &lt;60</p>
+  </div>
+  <div class="key" style="margin-top:20px">
+    <b>校正後的整體評價：體質比初評時更好，但天花板仍卡在規則五。</b>總分從 68.3 上修到 72.2 分，三項暫定評分全部定案且全部上修——投資紀律嚴謹、投資效益的因果站得住腳、融資結構以股權為主而非舉債。<b>但規則五的 10 分沒有動</b>，那是十年歷史累積的結果，也是這家公司目前唯一真正的弱項：<span class="negv">賺到的錢還沒完全變成現金</span>。<br>
+    如果要用一句話總結明細帶來的改變：<b>這家公司在虧損期的財務選擇是「稀釋股東、但不冒違約風險」，在轉盈期的選擇是「賺多少、花三分之一」。前者的代價已經反映在股本上，後者則是目前最值得肯定的地方。</b>
+  </div>
+
+  <div class="snap-note">
+    <b>本節資料來源：</b>使用者提供之 Goodinfo 現金流量表「投資活動」「融資活動」「其他影響現金流量之活動」「現金流量總計」明細截圖（2022–2025 四個年度）。非本次搜尋所得，亦未與公開資訊觀測站官方財報交叉驗證。<br>
+    <b>交叉驗證通過：</b>明細頁的期末現金及約當現金餘額（2022 年 103、2023 年 196.7、2024 年 210.5、2025 年 226.9 億元）與第 1 步彙總表的 E 欄（103、197、211、227）一致，僅四捨五入差異。<br>
+    <b>本次仍未取得：</b>2016、2019、2020、2021 年的融資活動明細（截圖僅涵蓋 2022–2025），以及 2026 上半年的投資／融資明細——因此 FORUS 收購的實際交割時點與 2026 年 B 的組成仍未確認，第 3 步深入 3 的相關推論維持原狀。
+  </div>
+</section>
+
+
+<section id="step1c">
+  <p class="steptag">第 1 步再校正：季度明細與早年融資明細</p>
+  <h2>三個問號一次補上，並更正我先前的一個推論</h2>
+
+  <div class="key alert">
+    <b>先更正錯誤。</b>我在第 3 步「深入 3」推測：若 FORUS 收購的 11.5 億元落在 2026 上半年，扣掉後真實資本支出約 15.2 億元、佔 A 約 37%。<span class="negv">這個數字錯了。</span>季度明細顯示 2026 上半年併購相關支出是 <b>17.3 億元</b>（子公司收購 8 億 ＋ 預付投資款 9.3 億），真實資本支出只有 <b>9.59 億元</b>，佔 A 僅 <b>23%</b>。方向判斷（投資紀律良好）是對的，但數字要以這裡為準。
+  </div>
+
+  <div class="key">
+    <b>三個先前標記「未取得」的缺口，這次補上了兩個半：</b>①FORUS 收購<b>確認在 2026 Q2 交割</b>；②2020、2021 年的融資明細顯示 C 正值<b>同樣 100% 來自現金增資</b>，規則四再上修至 <b>75 分</b>、總分升至 <b>73.0</b>；③規則五「A 落後 D」的<b>元凶找到了，是應收帳款</b>。至於 AOP 是否提列負債準備，出現了強烈線索但仍無法確認。
+  </div>
+
+  <h3><span class="no">1C-1</span>2026 上半年投資活動：併購佔了三分之二</h3>
+  <table>
+    <thead><tr><th>項目</th><th class="num">2026Q1</th><th class="num">2026Q2</th><th class="num">上半年合計</th><th>性質</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">子公司之（收購）處分</th><td class="num">—</td><td class="num negv">-8.00</td><td class="num negv">-8.00</td><td><b>併購</b></td></tr>
+      <tr class="warn"><th scope="row">預付投資款（增加）減少</th><td class="num">—</td><td class="num negv">-9.30</td><td class="num negv">-9.30</td><td><b>併購／投資預付</b></td></tr>
+      <tr><th scope="row">固定資產（增加）減少</th><td class="num negv">-4.67</td><td class="num negv">-3.25</td><td class="num negv">-7.92</td><td>資本支出</td></tr>
+      <tr><th scope="row">預付工程及設備款</th><td class="num negv">-1.07</td><td class="num negv">-0.60</td><td class="num negv">-1.67</td><td>資本支出</td></tr>
+      <tr><th scope="row">無形資產、存出保證金、其他非流動、金融資產</th><td class="num">-0.15</td><td class="num negv">-0.33</td><td class="num negv">-0.48</td><td>其他</td></tr>
+      <tr><th scope="row">按攤銷後成本衡量之金融資產到期還本</th><td class="num posv">0.64</td><td class="num">-0.001</td><td class="num posv">0.64</td><td>其他</td></tr>
+      <tr><th scope="row"><b>B 投資活動合計</b></th><td class="num negv"><b>-5.25</b></td><td class="num negv"><b>-21.47</b></td><td class="num negv"><b>-26.72</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">單位：億元。上半年合計與第 1 步彙總表的 26H1 B（−26.7 億元）一致。</p>
+  <table>
+    <thead><tr><th>拆解</th><th class="num">金額</th><th class="num">佔 B 比重</th><th class="num">佔 A（41.29 億）比重</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">併購相關（子公司收購＋預付投資款）</th><td class="num negv">-17.30</td><td class="num">64.7%</td><td class="num">41.9%</td></tr>
+      <tr><th scope="row">真實資本支出（固定資產＋預付工程設備款）</th><td class="num negv">-9.59</td><td class="num">35.9%</td><td class="num posv"><b>23.2%</b></td></tr>
+    </tbody>
+  </table>
+  <p><b>對規則二的意義：投資紀律比先前推算的更保守。</b>2026 上半年真正花在廠房設備的錢只佔營業現金流的 23%，比 2024 年（34%）與 2025 年（36%）都低。B 總額的放大幾乎全部來自一次性的併購，而不是產能軍備競賽。<b>規則二維持 90 分。</b></p>
+  <p class="cap"><b>一個對不上的地方要說明：</b>媒體報導 FORUS 收購金額為加幣 5,000 萬元（約新台幣 11.5 億元），但現金流量表「子公司之（收購）處分」只認列 8 億元。差異可能來自：取得標的時同時取得其帳上現金（現金流量表認列的是<b>淨現金流出</b>）、分期支付、或部分價金以其他形式給付。另外「預付投資款 9.3 億元」是否也與此案有關，無法從現金流量表確認。<span class="negv">這一點需要財報附註才能釐清，我不臆測。</span></p>
+
+  <h3><span class="no">1C-2</span>規則五的元凶：應收帳款，不是存貨</h3>
+  <svg viewBox="0 0 740 300" class="chart">
+<line x1="62" y1="250.0" x2="722" y2="250.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="254.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="196.0" x2="722" y2="196.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="200.0" text-anchor="end" class="tick">10</text>
+<line x1="62" y1="142.0" x2="722" y2="142.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="146.0" text-anchor="end" class="tick">20</text>
+<line x1="62" y1="88.0" x2="722" y2="88.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="92.0" text-anchor="end" class="tick">30</text>
+<line x1="62" y1="34.0" x2="722" y2="34.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="38.0" text-anchor="end" class="tick">40</text>
+<rect x="148.0" y="146.8" width="22.0" height="103.2" fill="#2E6F9E" rx="2"/>
+<text x="159.0" y="141.8" text-anchor="middle" class="vlab sm">19.1</text>
+<rect x="174.0" y="141.3" width="22.0" height="108.7" fill="#B4762C" rx="2"/>
+<text x="185.0" y="136.3" text-anchor="middle" class="vlab sm">20.1</text>
+<text x="172.0" y="282" text-anchor="middle" class="xlab">2025Q4</text>
+<rect x="368.0" y="156.4" width="22.0" height="93.6" fill="#2E6F9E" rx="2"/>
+<text x="379.0" y="151.4" text-anchor="middle" class="vlab sm">17.3</text>
+<rect x="394.0" y="123.9" width="22.0" height="126.1" fill="#B4762C" rx="2"/>
+<text x="405.0" y="118.9" text-anchor="middle" class="vlab sm">23.4</text>
+<text x="392.0" y="282" text-anchor="middle" class="xlab">2026Q1</text>
+<rect x="588.0" y="120.7" width="22.0" height="129.3" fill="#2E6F9E" rx="2"/>
+<text x="599.0" y="115.7" text-anchor="middle" class="vlab sm">23.9</text>
+<rect x="614.0" y="77.3" width="22.0" height="172.7" fill="#B4762C" rx="2"/>
+<text x="625.0" y="72.3" text-anchor="middle" class="vlab sm">32</text>
+<text x="612.0" y="282" text-anchor="middle" class="xlab">2026Q2</text>
+<text x="54" y="20" text-anchor="end" class="unit">億元</text>
+<rect x="62" y="8" width="11" height="11" fill="#2E6F9E" rx="2"/>
+<text x="79" y="18" class="leg">A 營業活動淨現金流</text>
+<rect x="157" y="8" width="11" height="11" fill="#B4762C" rx="2"/>
+<text x="174" y="18" class="leg">D 稅前淨利</text>
+</svg>
+  <div class="legend-note"><span><span class="sw" style="background:#2E6F9E"></span>A 營業活動淨現金流</span>
+    <span><span class="sw" style="background:#B4762C"></span>D 稅前淨利</span></div>
+  <table>
+    <thead><tr><th>季度</th><th class="num">A</th><th class="num">D（稅前淨利）</th><th class="num">落差</th><th>判定</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2025Q4</th><td class="num">19.12</td><td class="num">20.13</td><td class="num negv">-1.01</td><td><span class="fail">A &lt; D</span></td></tr>
+      <tr><th scope="row">2026Q1</th><td class="num">17.34</td><td class="num">23.36</td><td class="num negv">-6.02</td><td><span class="fail">A &lt; D</span></td></tr>
+      <tr class="warn"><th scope="row">2026Q2</th><td class="num">23.95</td><td class="num">31.99</td><td class="num negv">-8.04</td><td><span class="fail">A &lt; D</span></td></tr>
+    </tbody>
+  </table>
+  <p class="cap">單位：億元。Goodinfo 現金流量表首列標示為「本期淨利（淨損）」，但驗算後確認為<b>稅前</b>數字：2026Q1 23.36 ＋ Q2 31.99 ＝ 55.35，與官方上半年稅前淨利 55.3 億元相符。</p>
+  <p><b>落差連續三季擴大（−1.01 → −6.02 → −8.04）。</b>這正是第 6 步觀察指標 #3 想追蹤的事，季度明細等於提前給了答案，而且方向不理想。接著看錢卡在哪：</p>
+  <svg viewBox="0 0 740 250" class="chart" role="img" aria-label="">
+<line x1="62" y1="204.0" x2="722" y2="204.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="208.0" text-anchor="end" class="tick">-10</text>
+<line x1="62" y1="168.4" x2="722" y2="168.4" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="172.4" text-anchor="end" class="tick">-8</text>
+<line x1="62" y1="132.8" x2="722" y2="132.8" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="136.8" text-anchor="end" class="tick">-6</text>
+<line x1="62" y1="97.2" x2="722" y2="97.2" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="101.2" text-anchor="end" class="tick">-4</text>
+<line x1="62" y1="61.6" x2="722" y2="61.6" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="65.6" text-anchor="end" class="tick">-2</text>
+<line x1="62" y1="26.0" x2="722" y2="26.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="30.0" text-anchor="end" class="tick">0</text>
+<rect x="149.0" y="26.0" width="46.0" height="162.7" fill="#C4453B" rx="2"/>
+<text x="172.0" y="202.7" text-anchor="middle" class="vlab">-9.14</text>
+<text x="172.0" y="234" text-anchor="middle" class="xlab">2025Q4</text>
+<rect x="369.0" y="26.0" width="46.0" height="54.1" fill="#C4453B" rx="2"/>
+<text x="392.0" y="94.1" text-anchor="middle" class="vlab">-3.04</text>
+<text x="392.0" y="234" text-anchor="middle" class="xlab">2026Q1</text>
+<rect x="589.0" y="26.0" width="46.0" height="145.2" fill="#C4453B" rx="2"/>
+<text x="612.0" y="185.2" text-anchor="middle" class="vlab">-8.16</text>
+<text x="612.0" y="234" text-anchor="middle" class="xlab">2026Q2</text>
+<text x="54" y="16" text-anchor="end" class="unit">億元</text>
+</svg>
+  <p class="cap">應收帳款增減（億元），負值代表應收帳款增加、佔用現金。</p>
+  <table>
+    <thead><tr><th>項目</th><th class="num">2026Q1</th><th class="num">2026Q2</th><th class="num">上半年</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">應收帳款（增加）減少</th><td class="num negv">-3.04</td><td class="num negv">-8.16</td><td class="num negv"><b>-11.20</b></td></tr>
+      <tr><th scope="row">存貨（增加）減少</th><td class="num posv">0.79</td><td class="num negv">-0.48</td><td class="num posv">0.31</td></tr>
+      <tr><th scope="row">預付款項（增加）減少</th><td class="num negv">-2.43</td><td class="num negv">-1.54</td><td class="num negv">-3.97</td></tr>
+      <tr><th scope="row">其他流動資產（增加）減少</th><td class="num">-0.005</td><td class="num negv">-2.63</td><td class="num negv">-2.64</td></tr>
+      <tr><th scope="row"><b>營業資產淨變動合計</b></th><td class="num negv"><b>-4.40</b></td><td class="num negv"><b>-12.93</b></td><td class="num negv"><b>-17.33</b></td></tr>
+    </tbody>
+  </table>
+  <div class="key" style="margin-top:14px">
+    <b>這是一個「好消息包在壞消息裡」的結構。</b><br>
+    壞消息：上半年營業資產淨變動佔用了 <b>17.33 億元</b>現金，其中應收帳款一項就佔 11.2 億元，這是 A 落後 D 的主因。<br>
+    好消息：<span class="posv">存貨上半年淨變動是 <b>＋0.31 億元</b>，幾乎沒有增加</span>。這一點很關鍵——<b>如果是產品賣不出去，存貨會先堆積；存貨沒動而應收帳款增加，代表貨確實出去了、只是錢還沒收回來。</b>這是高成長期典型的「成長性營運資金佔用」，而不是滯銷警訊。<br>
+    量化一下：Q2 應收帳款增加 8.16 億元，對應當季營收 68.6 億元，約當 <b>11.9%</b>（<span class="calc">推算</span>），相當於一個多月的銷貨，尚在合理範圍。<b>值得持續盯，但目前不構成紅燈。</b>
+  </div>
+  <p class="cap"><b>規則五分數不變，仍為 10 分。</b>該規則採嚴格年度二分法，季度資料不列入計分。但這一節讓 10 分的<b>性質</b>更清楚：問題出在收款週期而非獲利品質造假，且存貨數據支持這個判讀。</p>
+
+  <h3><span class="no">1C-3</span>負債準備：AOP 提列的強烈線索，但仍無法確認</h3>
+  <svg viewBox="0 0 740 240" class="chart" role="img" aria-label="">
+<line x1="62" y1="194.0" x2="722" y2="194.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="198.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="152.0" x2="722" y2="152.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="156.0" text-anchor="end" class="tick">1</text>
+<line x1="62" y1="110.0" x2="722" y2="110.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="114.0" text-anchor="end" class="tick">2</text>
+<line x1="62" y1="68.0" x2="722" y2="68.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="72.0" text-anchor="end" class="tick">3</text>
+<line x1="62" y1="26.0" x2="722" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">4</text>
+<rect x="149.0" y="115.9" width="46.0" height="78.1" fill="#0F6E5C" rx="2"/>
+<text x="172.0" y="109.9" text-anchor="middle" class="vlab">1.86</text>
+<text x="172.0" y="224" text-anchor="middle" class="xlab">2025Q4</text>
+<rect x="369.0" y="112.5" width="46.0" height="81.5" fill="#0F6E5C" rx="2"/>
+<text x="392.0" y="106.5" text-anchor="middle" class="vlab">1.94</text>
+<text x="392.0" y="224" text-anchor="middle" class="xlab">2026Q1</text>
+<rect x="589.0" y="40.3" width="46.0" height="153.7" fill="#0F6E5C" rx="2"/>
+<text x="612.0" y="34.3" text-anchor="middle" class="vlab">3.66</text>
+<text x="612.0" y="224" text-anchor="middle" class="xlab">2026Q2</text>
+<text x="54" y="16" text-anchor="end" class="unit">億元</text>
+</svg>
+  <p class="cap">負債準備增加（億元）。此為現金流量表中的加回項，代表<b>已認列費用但尚未付現</b>。</p>
+  <p>連續三季提列且金額跳增：2025Q4 1.86 億 → 2026Q1 1.94 億 → <b>2026Q2 3.66 億</b>，三季合計 <b>7.46 億元</b>（<span class="calc">推算</span>）。時序上，ICC 第一階段部分仲裁判斷是 2025/02/17 作出、2026/04 法蘭克福高等法院駁回撤銷聲請——<b>公司在這段期間持續加大提列，與訴訟進程的時間軸吻合</b>。</p>
+  <div class="key alert" style="margin-top:14px">
+    <b>但我不能說「這就是 AOP 的提列」。</b>「負債準備」是一個彙總科目，製藥業常見的還有銷售折讓與退佣準備（rebate／chargeback）、產品保固、員工相關準備等。<span class="negv">現金流量表只給科目與金額，不給明細內容。</span><br>
+    可以確定的是三件事：①公司帳上<b>確實有持續且加速的負債準備提列</b>；②這些費用<b>已經反映在稅前淨利裡</b>，也就是說 EPS 已經扣過；③這些錢<b>還沒有付出去</b>，未來實際支付時會直接減少營業現金流。<br>
+    對第 6 步保守情境的影響：如果這 7.46 億元當中有相當比例是 AOP 相關，<b>約 35.6 億元的裁定金額已經有一部分被提前吸收</b>，衝擊會比原先試算的溫和；若完全無關，原試算不變。<b>結論仍是：必須查 Q2 合併財報附註的負債準備明細。</b>這依然是本次分析最重要的未解項。
+  </div>
+
+  <h3><span class="no">1C-4</span>2020–2021 融資明細：規則四再上修至 75 分</h3>
+  <table>
+    <thead><tr><th>年度</th><th class="num">C 總額</th><th class="num">現金增資</th><th class="num">短期借款</th><th class="num">長期借款</th><th class="num">庫藏股買回</th><th class="num">員工執行認股權</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2020</th><td class="num posv">35.66</td><td class="num posv">38.13</td><td class="num posv">0.50</td><td class="num negv">-0.22</td><td class="num negv">-2.57</td><td class="num posv">0.24</td></tr>
+      <tr><th scope="row">2021</th><td class="num posv">28.09</td><td class="num posv">27.27</td><td class="num negv">-0.30</td><td class="num negv">-0.066</td><td class="num negv">-0.88</td><td class="num posv">3.18</td></tr>
+      <tr><th scope="row">2022</th><td class="num posv">95.79</td><td class="num posv">86.47</td><td class="num posv">9.74</td><td class="num negv">-0.12</td><td class="num">0</td><td class="num posv">0.96</td></tr>
+      <tr><th scope="row">2023</th><td class="num posv">104.5</td><td class="num posv">138.8</td><td class="num negv">-9.73</td><td class="num negv">-0.12</td><td class="num negv">-27.18</td><td class="num posv">4.54</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">單位：億元。租賃本金與利息等小額項目未列。</p>
+  <p><b>四個年度的答案完全一致：C 的正值全部來自現金增資，借款幾乎沒有貢獻。</b>2020–2023 年現金增資合計 <b>290.67 億元</b>（<span class="calc">推算</span>），同期短期借款淨變動接近零（2022 年借 9.74、2023 年還 9.73），長期借款年年淨償還。<b>公司在整個虧損期完全沒有依賴債務融資。</b></p>
+  <p><b>規則四由 70 分再上修至 75 分。</b>6 個「A 為負 ＋ C 為正」的警戒年度中，現在已有 <b>4 個（2020、2021、2022、2023）確認是純股權募資</b>，僅 2016、2019 兩年的明細仍未取得。維持在 75 分而非更高的理由不變：本業長期無法自給仍是事實，且股權募資的代價是股本從 20.4 億元一路稀釋到 42.2 億元。</p>
+
+  <h3><span class="no">1C-5</span>最終評分</h3>
+  <table>
+    <thead><tr><th>規則</th><th>項目</th><th class="num">初評</th><th class="num">明細校正</th><th class="num">最終</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">規則一</th><td>A 逐年成長趨勢</td><td class="num">85</td><td class="num">85</td><td class="num">85</td></tr>
+      <tr><th scope="row">規則二</th><td>B 投資紀律</td><td class="num">85</td><td class="num">90</td><td class="num">90</td></tr>
+      <tr><th scope="row">規則三</th><td>B 投資效益</td><td class="num">85</td><td class="num">88</td><td class="num">88</td></tr>
+      <tr class="warn"><th scope="row">規則四</th><td>C 融資合理性</td><td class="num negv">55</td><td class="num">70</td><td class="num posv">75 ▲</td></tr>
+      <tr><th scope="row">規則五</th><td>A &gt; D 現金流品質</td><td class="num negv">10</td><td class="num negv">10</td><td class="num negv">10</td></tr>
+      <tr><th scope="row">規則六</th><td>E 期末現金穩定性</td><td class="num">90</td><td class="num">90</td><td class="num">90</td></tr>
+    </tbody>
+  </table>
+  <div class="total">
+    <div class="big">73.0</div>
+    <div class="lv">良好（60–79）　<span style="font-size:14px;color:#65767F">初評 68.3 → 校正 72.2 → 最終 73.0</span></div>
+  </div>
+  <div class="key" style="margin-top:20px">
+    <b>三輪校正的方向完全一致：資料愈細，這家公司的財務紀律看起來愈好。</b>從只看總額的 68.3 分，到年度明細的 72.2 分，再到季度＋早年明細的 73.0 分，三項暫定評分全部上修並定案。虧損期不舉債、轉盈期資本支出只花營業現金流的兩三成、投資與獲利的因果站得住腳。<br>
+    <b>而規則五的 10 分三輪都沒有動，這件事本身很說明問題。</b>它不是資料不足造成的誤判，是真實存在的結構特徵：<span class="negv">這家公司賺錢的速度，比收到錢的速度快</span>。季度明細進一步確認，錢卡在應收帳款而非存貨——性質是良性的，但落差連三季擴大仍需要盯著。
+  </div>
+
+  <div class="snap-note">
+    <b>本節資料來源：</b>使用者提供之 Goodinfo「年度現金流量表（併）2020–2023」與「單季現金流量表（併）2025Q4／2026Q1／2026Q2」完整明細截圖。非本次搜尋所得，亦未與公開資訊觀測站官方財報交叉驗證。<br>
+    <b>交叉驗證通過：</b>①單季 A 加總 23.95＋17.34＝41.29，與第 1 步 26H1 的 41.3 一致；②單季 B 加總 −21.47＋（−5.25）＝−26.72，與 26H1 的 −26.7 一致；③單季稅前淨利加總 55.35，與官方上半年 55.3 億元一致；④2026Q2 期末現金 244.7 億元，與第 1 步 E 欄的 245 億元一致；⑤年度表 2020–2023 之 A、B、C、期末現金皆與第 1 步彙總表相符。<br>
+    <b>仍未取得：</b>2016、2019 年融資活動明細；負債準備的科目明細（需財報附註）；FORUS 收購價金與「預付投資款 9.3 億元」的關聯性。
+  </div>
+</section>
+
+<section id="step2">
+  <p class="steptag">第 2 步／共 6 步：基本資訊查詢</p>
+  <h2>市場怎麼看這家公司</h2>
+
+  <div class="key">
+    <b>一句話結論：</b>第一步的盲測結論在這裡得到強力佐證——<b>2026 上半年淨利 46.8 億元，與使用者提供的現金流量表 26Q2 稅後淨利完全一致</b>，官方 EPS 11.35 元也與截圖的 11.3 元相符。但估值已經很貴：<b>2026/08/14 收盤 1,500 元，Yahoo 顯示本益比 73.46 倍</b>，現金殖利率僅約 <b>0.1%</b>。
+  </div>
+
+  <div class="key alert">
+    <b>兩件影響數字解讀的事，必須先講：</b>①公司在 <b>2026/07/09 除權息</b>，配發股票股利 1.0928 元（盈餘配股），加上 5 月「註銷限制員工權利新股」減資，<b>已發行股數由 3.816 億股增加到 4.224 億股（+10.7%）</b>——跨期間比較 EPS 前必須確認基礎是否一致。②Yahoo 顯示的「同業平均本益比」在兩個時間點分別為 <span class="negv">63.25 倍與 33.99 倍</span>，差距近一倍，代表此欄位口徑不穩定，<b>本報告不以它作為「貴或便宜」的比較基準</b>。
+  </div>
+
+  <h3><span class="no">2-1</span>股價與估值</h3>
+  <table>
+    <thead><tr><th>項目</th><th class="num">數值</th><th>資料時點</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">收盤價</th><td class="num">1,500 元</td><td>2026/08/14 14:30（Yahoo 走勢圖）</td></tr>
+      <tr><th scope="row">當日漲跌</th><td class="num posv">+55（+3.81%）</td><td>2026/08/14</td></tr>
+      <tr><th scope="row">成交量</th><td class="num">3,836 張</td><td>2026/08/14</td></tr>
+      <tr><th scope="row">本益比（Yahoo）</th><td class="num">73.46 倍</td><td>2026/08/14</td></tr>
+      <tr><th scope="row">盤中價（另一時點）</th><td class="num">1,330 元（+7.26%）</td><td>2026/08/10 11:55，本益比 77.74 倍</td></tr>
+      <tr><th scope="row">每股淨值</th><td class="num">98.54 元</td><td>2026 Q2（Yahoo 基本資料，資料時間 2026/08/16）</td></tr>
+      <tr><th scope="row">市值</th><td class="num">6,336.6 億元</td><td>2026/08/16（Yahoo 基本資料）</td></tr>
+      <tr><th scope="row">股價淨值比</th><td class="num">15.2 倍</td><td><span class="calc">推算</span>1,500 ÷ 98.54</td></tr>
+    </tbody>
+  </table>
+  <p class="cap"><b>兩個時點並陳，不是區間：</b>8/10 抓到 1,330 元、8/14 抓到 1,500 元，是同一欄位在不同股價下的兩張快照，頁面上從來沒有顯示過「1,330～1,500」這樣的範圍。兩者都是「最後更新時間」的快照而非即時報價，實際交易請以你的券商 App 為準。</p>
+
+  <h3><span class="no">2-2</span>股本變動：比對 EPS 前必看</h3>
+  <table>
+    <thead><tr><th>項目</th><th class="num">數值</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2025 年度現金股利</th><td class="num">1.4902 元</td><td>發放日 2026/08/06</td></tr>
+      <tr><th scope="row">2025 年度股票股利</th><td class="num">1.0928 元</td><td>盈餘配股，配股發放日 2026/08/13</td></tr>
+      <tr><th scope="row">除權息日</th><td class="num">2026/07/09</td><td>除權、除息同日</td></tr>
+      <tr class="warn"><th scope="row">已發行股數（配股前）</th><td class="num">381,606,370 股</td><td>Yahoo 資料時間 2026/07/12</td></tr>
+      <tr class="warn"><th scope="row">已發行股數（配股後）</th><td class="num">422,433,303 股</td><td>Yahoo 資料時間 2026/08/16，<b>+10.7%</b></td></tr>
+      <tr><th scope="row">現金殖利率</th><td class="num">約 0.10%</td><td><span class="calc">推算</span>1.4902 ÷ 1,500</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">股數增幅 10.7% 與配股率 10.93%（每股配 1.0928 元股票股利）幾乎相符，另公司於 2026/05/25 完成「註銷限制員工權利新股」減資變更登記，兩者共同造成股本變動。<b>後果：</b>2025 年 EPS 13.64 元與 2026 Q1 EPS 5.79 元是配股前的股本基礎；若換算到目前 4.224 億股，2025 年 EPS 約為 <b>12.30 元</b>（<span class="calc">推算</span>13.64 ÷ 1.1093）。第三方網站的歷史單季資料庫未必同步回溯重編，直接拿來算年增率或本益比會失真。</p>
+
+  <h3><span class="no">2-3</span>EPS 與獲利</h3>
+  <table>
+    <thead><tr><th>期間</th><th class="num">EPS（元）</th><th class="num">營收（億元）</th><th class="num">淨利（億元）</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2022</th><td class="num negv">-4.84</td><td class="num">—</td><td class="num">—</td><td>虧損期</td></tr>
+      <tr><th scope="row">2023</th><td class="num negv">-1.93</td><td class="num">—</td><td class="num">—</td><td>虧損收斂</td></tr>
+      <tr><th scope="row">2024</th><td class="num posv">8.96</td><td class="num">—</td><td class="num">—</td><td>首度轉盈</td></tr>
+      <tr><th scope="row">2025</th><td class="num posv">13.64</td><td class="num">—</td><td class="num">—</td><td>配股前基礎</td></tr>
+      <tr><th scope="row">2026 Q1</th><td class="num posv">5.79</td><td class="num">51.2</td><td class="num">21.5</td><td>營收年增 57.23%</td></tr>
+      <tr><th scope="row">2026 Q2</th><td class="num posv">6.13</td><td class="num">68.6</td><td class="num">25.3</td><td>營收年增 90.30%</td></tr>
+      <tr class="warn"><th scope="row">2026 上半年</th><td class="num posv">11.35</td><td class="num">119.8</td><td class="num">46.8</td><td>營收年增 74.59%、淨利年增 123.28%</td></tr>
+      <tr><th scope="row">2026 年 7 月</th><td class="num">—</td><td class="num">25.07</td><td class="num">—</td><td>月營收年增 92.59%</td></tr>
+    </tbody>
+  </table>
+  <p><b>近四季 EPS 合計約 19.90 元</b>（<span class="calc">推算</span>2026Q2 6.13 ＋ 2026Q1 5.79 ＋ 2025Q4 3.99 ＋ 2025Q3 3.99），對應 1,500 元的本益比約 <b>75.4 倍</b>（<span class="calc">推算</span>）。與 Yahoo 顯示的 73.46 倍接近但不完全相同，差異來自加權股本口徑；<b>且這四季分屬配股前後不同基礎，加總本身就不精確</b>，僅供概略參考。</p>
+  <p>2026 Q2 獲利能力（Yahoo 資料時間 2026/08/16）：營業毛利率 94.23%、營業利益率 46.03%、稅前淨利率 46.66%、股東權益報酬率 7.36%。Q2 本業獲利 31.6 億元、年增 188.01%，成長速度明顯快於營收的 90.30%，代表<b>營業槓桿正在發揮</b>——這與第一步規則一觀察到的「A 快速放大」方向一致。</p>
+
+  <h3><span class="no">2-4</span>與第一步現金流數字的交叉核對</h3>
+  <table>
+    <thead><tr><th>項目</th><th class="num">第一步（使用者截圖）</th><th class="num">第二步（官方／媒體）</th><th>核對</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2026 上半年稅後淨利</th><td class="num">46.8 億</td><td class="num">46.8 億</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">2026 上半年 EPS</th><td class="num">11.3 元</td><td class="num">11.35 元</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">2025 年 EPS</th><td class="num">13.6 元</td><td class="num">13.64 元</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">2024 年 EPS</th><td class="num">8.96 元</td><td class="num">8.96 元</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">期末現金餘額 245 億</th><td class="num">245 億</td><td class="num">未取得</td><td><span class="why">待官方合併資產負債表核對</span></td></tr>
+    </tbody>
+  </table>
+  <p class="cap">第一步的盲測資料通過交叉驗證，可信度提高。唯一還沒對到的是期末現金餘額，需要官方 Q2 合併資產負債表的「現金及約當現金」才能確認口徑是否相同。</p>
+  <div class="key alert" style="margin-top:14px">
+    <b>把兩步併起來看，第一步規則五的問號變得更清楚：</b>2026 上半年營收年增 <b>74.59%</b>、淨利年增 <b>123.28%</b>，但同期<span class="negv">營業活動現金流（A）41.3 億元仍低於稅前淨利（D）55.3 億元約 14 億</span>。營收在高速擴張的公司，應收帳款與存貨同步膨脹是常見現象，未必是壞事，但這正是規則一提到「需要查應收帳款與存貨細項」的地方，值得追蹤而不是忽略。
+  </div>
+
+  <h3><span class="no">2-5</span>公司基本資料與籌碼</h3>
+  <table>
+    <thead><tr><th>項目</th><th>內容</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">公司全名</th><td>藥華醫藥股份有限公司（PharmaEssentia）</td></tr>
+      <tr><th scope="row">產業類別</th><td>生技（上市）</td></tr>
+      <tr><th scope="row">主要業務</th><td>新藥之研究、開發、生產與銷售</td></tr>
+      <tr><th scope="row">核心產品</th><td>Ropeginterferon alfa-2b（Ropeg／P1101），治療真性紅血球增多症（PV），已於全球 50 國獲准上市</td></tr>
+      <tr><th scope="row">成立／上市</th><td>成立 2000/05/09；上市掛牌 2024/01/25</td></tr>
+      <tr><th scope="row">董事長／總經理</th><td>詹青柳／黃正谷</td></tr>
+      <tr><th scope="row">董監持股比例</th><td>9.61%（2026/08/16）</td></tr>
+      <tr><th scope="row">融資餘額</th><td>8,450 張，融資使用率 8.90%（<b>資料時間 2026/06/05</b>）</td></tr>
+      <tr><th scope="row">券資比／資券當沖</th><td>0.44%／1 張（同上日期）</td></tr>
+    </tbody>
+  </table>
+  <p class="cap"><b>籌碼資料有明顯時間落差：</b>本次抓取到的 Yahoo 資券頁面快取停在 2026/06/05，距今超過兩個月，期間股價從約 937 元漲到 1,500 元，融資狀況很可能已大幅改變，<b>此欄位僅供參考、不宜作為判斷依據</b>。融資餘額 8,450 張約當已發行股數的 2.0%（<span class="calc">推算</span>），以當時而言屬偏低水位；當沖僅 1 張，短線投機比重不高。籌碼面訊號與現金流／基本面訊號分開看，不混為一談。</p>
+  <p class="cap"><b>未能取得的項目：</b>52 週最高／最低價本次未查到可靠來源，故不列出，避免用印象填數字。</p>
+
+  <h3><span class="no">2-6</span>法說會場次</h3>
+  <table>
+    <thead><tr><th>日期</th><th>場次</th><th>主要內容</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">2026/08/12</th><td>Q2 法說會</td><td>Q2 及上半年財報；Ropeg 全球布局、注射筆美國開賣、ET 適應症進度</td></tr>
+      <tr><th scope="row">2026/05/14</th><td>Q1 法說會（受邀）</td><td>Q1 財報；營益率首度突破 40%、費用率降至 47.12%</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">公司投資人關係資訊請見官網 <a href="http://www.PharmaEssentia.com">www.PharmaEssentia.com</a>。<b>本報告的法說會內容摘要來自財經媒體報導，不是我直接讀取官方簡報 PDF</b>——MOPS 官網簡報連結實測會被 robots.txt 擋下，無法直接解析。</p>
+
+  <div class="snap-note">
+    <b>本節資料來源（逐項對應）：</b><br>
+    · 收盤價 1,500 元、+3.81%、成交量 3,836 張、本益比 73.46 倍（2026/08/14）與盤中 1,330 元、本益比 77.74 倍（2026/08/10）：<a href="https://tw.stock.yahoo.com/quote/6446.TW">Yahoo 股市 6446 走勢圖</a>（前者為搜尋結果快照、後者為直接抓取，兩者時點不同）<br>
+    · 股本、已發行股數、市值、每股淨值、股利、除權息日、董監持股、公司基本資料、2026Q2 獲利能力：<a href="https://tw.stock.yahoo.com/quote/6446.TW/profile">Yahoo 股市 6446 基本資料</a><br>
+    · 歷年與單季 EPS（2022～2026Q1）：<a href="https://tw.stock.yahoo.com/quote/6446.TW/eps">Yahoo 股市 6446 每股盈餘</a><br>
+    · 2026 Q2／上半年營收、本業獲利、淨利、EPS 11.35 元，以及 Ropeg 全球 50 國藥證、注射筆 7 月美國開賣、ET 適應症進度（台灣 5 月、美國 PDUFA 8/30、日本 8 月中）：<a href="https://www.chinatimes.com/realtimenews/20260812003849-260410">中時新聞網／時報資訊 2026-08-12 法說會報導</a><br>
+    · 2026 Q1 營收 51.2 億、季增 4.92%、年增 57.23%、營益率、費用率 47.12%：<a href="https://www.genetinfo.com/investment/featured/item/95444.html">Genet 生技投資第一站 2026Q1 法說會報導</a><br>
+    · 2026 年 7 月合併營收 25.07 億元、年增 92.59%：<a href="https://tw.stock.yahoo.com/news/%E5%85%AC%E5%91%8A-%E8%97%A5%E8%8F%AF%E8%97%A5-2026%E5%B9%B47%E6%9C%88%E5%90%88%E4%BD%B5%E7%87%9F%E6%94%B625-07%E5%84%84%E5%85%83-%E5%B9%B4%E5%A2%9E92-100247086.html">Yahoo 股市個股公告標題</a>（僅取自公告標題，未取得公告全文）<br>
+    · 註銷限制員工權利新股減資變更登記、股利除權除息基準日公告：<a href="https://goodinfo.tw/tw/StockDividendSchedule.asp?STOCK_ID=6446">Goodinfo 6446 除權除息日程頁公告訊息欄</a><br>
+    · 融資餘額、融券、券資比、資券當沖（2026/06/05）：<a href="https://tw.stock.yahoo.com/quote/6446.TW/margin">Yahoo 股市 6446 資券變化</a><br>
+    標示<span class="calc">推算</span>者為以已知數字計算而得，非直接查得的公告數字。
+  </div>
+</section>
+
+<section id="step3">
+  <p class="steptag">第 3 步／共 6 步：法說會資料</p>
+  <h2>法說會講了什麼，沒講什麼</h2>
+
+  <div class="key">
+    <b>法說會的主軸只有一條線：ET 適應症。</b>2026/08/12 法說會把成長故事拆成三段——PV 既有市場靠<b>注射筆（7 月美國開賣）</b>提升滲透率、ET 適應症進入<b>多國藥證收割期（美國 PDUFA 目標日 2026/08/30）</b>、產能則由台中廠、竹北廠、波多黎各廠三地接力。第一步看到的「A 快速放大」，在這裡找到了業務面的對應解釋。
+  </div>
+
+  <div class="key alert">
+    <b>但法說會沒有放在主軸上、卻在同一週發生的事：AOP 仲裁案第二階段判斷。</b>公司於 2026/08/07 接獲 ICC 第二階段「部分仲裁判斷」，隔日召開重大訊息記者會。<span class="negv">三項裁定金額合計約 9,748 萬歐元</span>（<span class="calc">推算</span>加總），公司說明對財務業務無重大影響、將研擬撤銷。<b>這是本次分析中唯一的重大非營運風險，必須跟成長故事並排看，不能只看法說會的那一面。</b>
+  </div>
+
+  <h3><span class="no">3-1</span>成長主軸一：ET 適應症的藥證時程</h3>
+  <table>
+    <thead><tr><th>市場</th><th>ET 藥證進度</th><th>時點</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">台灣</th><td>已核准</td><td>2026/05/12（已發生）</td></tr>
+      <tr class="warn"><th scope="row">美國</th><td>FDA 審查完成目標日（PDUFA Date）</td><td>2026/08/30（尚未發生）</td></tr>
+      <tr><th scope="row">日本</th><td>有望取得</td><td>2026 年 8 月中</td></tr>
+      <tr><th scope="row">中國</th><td>預計取得</td><td>2026 年底前（法人估 11 月）</td></tr>
+      <tr><th scope="row">韓國</th><td>預計取得</td><td>2026 年底前（法人估 12 月）</td></tr>
+    </tbody>
+  </table>
+  <p>公司表示，若美國 ET 藥證通過，Ropeg 有望成為<b>第一個獲 FDA 核准可同時治療 PV 和 ET 的藥物，也是 30 年來第一個獲 FDA 核准的 ET 新藥</b>。ET 的病患基數與 PV 相當，法人因此把它視為市場潛力翻倍的關鍵。</p>
+  <p class="cap"><b>時間邏輯提醒：</b>美國 PDUFA 目標日 2026/08/30 是<b>兩週後</b>的事，是目前唯一還沒揭曉、且短期影響最大的變數。台灣 5 月已核准則是已發生的事實，不能再當成「等待驗證的訊號」。</p>
+
+  <h3><span class="no">3-2</span>成長主軸二：PV 既有市場與注射筆</h3>
+  <table>
+    <thead><tr><th>項目</th><th>內容</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">PV 全球藥證</th><td>已於 <b>50 個國家</b>獲准上市，涵蓋美國、日本、中國、歐盟；2026 年 7 月再取得加拿大 PV 藥證</td></tr>
+      <tr><th scope="row">注射筆</th><td>2026 年 7 月正式於美國出貨開賣，已有病人使用；極細針頭與精準劑量設計，目標提升用藥便利性與留存率</td></tr>
+      <tr><th scope="row">日本高劑量方案</th><td>2026 年 2 月獲核准納入仿單，最快四週可達 500 微克目標劑量，縮短治療調整期</td></tr>
+      <tr><th scope="row">NCCN 指南</th><td>Ropeg 在取證前即獲美國 NCCN 推薦</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">注射筆是「已經開賣但還沒看到完整季度貢獻」的項目——7 月才出貨，最快要到 Q3 財報才會反映。這是可以往後追蹤的觀察點。</p>
+
+  <h3><span class="no">3-3</span>成長主軸三：產能與併購（回頭補第一步的空白）</h3>
+  <table>
+    <thead><tr><th>基地／事件</th><th>狀態</th><th>時程</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">台中廠第二條產線</th><td>已獲美國 FDA 與歐盟核准，約可供應 4 萬名病患，以亞洲、歐洲為主</td><td>已完成</td></tr>
+      <tr><th scope="row">竹北新廠</th><td>完工後總產能可供應逾 10 萬名病患</td><td>預計 2026 年底投產</td></tr>
+      <tr><th scope="row">波多黎各廠</th><td>投資約 14.5 億元，「完整複製」台中廠模式，打造台美雙生產基地</td><td>預計 2027 年投產</td></tr>
+      <tr class="warn"><th scope="row">收購加拿大藥廠 FORUS Therapeutics</th><td>公司宣布收購（2026 年 4 月報導）</td><td>已宣布</td></tr>
+    </tbody>
+  </table>
+  <div class="key" style="margin-top:14px">
+    <b>這一段直接回答了第一步規則二／三的暫定問題。</b>第一步只看得到「B（投資活動）2025 年 −24.8 億、2026 上半年 −26.7 億」這個總額，無法判斷錢花在哪。現在知道同期至少有<b>三筆性質完全不同的資金運用</b>：竹北廠與波多黎各廠的<b>固定資產投資</b>、FORUS 的<b>子公司收購（併購）</b>，以及帳上 245 億現金可能存在的<b>金融資產調度</b>。<br>
+    <span class="negv">這正是規則二、三的評分仍必須維持「暫定」的原因</span>——把併購金額當成擴產資本支出，或把買債券當成投資效益，都會得出錯的結論。取得投資活動明細後，這兩項才能定案。
+  </div>
+
+  <h3><span class="no">3-4</span>研發管線</h3>
+  <table>
+    <thead><tr><th>項目</th><th>適應症／領域</th><th>階段</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Ropeg（HOPE-PMF）</th><td>早期原發性骨髓纖維化（Early PMF）</td><td>全球三期，2026 上半年完成收案</td></tr>
+      <tr><th scope="row">PEG-IL2</th><td>免疫疾病（長效型介白素）</td><td>2026–2027 進入人體臨床</td></tr>
+      <tr><th scope="row">PD1-IL2</th><td>實體腫瘤（雙特異性抗體融合蛋白）</td><td>2026–2027 進入人體臨床</td></tr>
+      <tr><th scope="row">ADC</th><td>—</td><td>2026–2027 進入人體臨床</td></tr>
+      <tr><th scope="row">TCR-T</th><td>創新細胞療法</td><td>2026–2027 進入人體臨床</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">四項新藥進臨床代表研發費用會持續上升。以第一步的角度看，這是未來 A（營業現金流）的壓力來源之一——營收若停止加速，費用卻照常增加，A 與 D 的落差可能擴大。</p>
+
+  <h3><span class="no">3-5</span>AOP 仲裁案：本次分析最重要的風險項</h3>
+  <table>
+    <thead><tr><th>時間</th><th>事件</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2025/02/17</th><td>ICC 國際仲裁院作出第一階段「部分仲裁判斷」，認定藥華藥有部分遲延責任</td></tr>
+      <tr><th scope="row">2026/04</th><td>德國法蘭克福高等法院駁回藥華藥撤銷第一階段仲裁判斷的聲請</td></tr>
+      <tr><th scope="row">2026/05/03</th><td>藥華藥宣布已向德國聯邦最高法院（BGH）提起上訴，審理中</td></tr>
+      <tr class="warn"><th scope="row">2026/08/07–08</th><td>接獲 ICC 第二階段「部分仲裁判斷」，隔日召開重大訊息記者會</td></tr>
+    </tbody>
+  </table>
+  <p><b>第二階段裁定內容（依公司重大訊息原文）：</b></p>
+  <table>
+    <thead><tr><th>項目</th><th class="num">金額（歐元）</th><th>方向</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">AOP 積欠藥華藥貨款及權利金（2019–2023H1）</th><td class="num posv">&gt; 1,700 萬</td><td>AOP 付給藥華藥</td></tr>
+      <tr class="warn"><th scope="row">遲延 5 個月取得歐洲藥證（已與上項相抵後）</th><td class="num negv">31,319,250.27</td><td>藥華藥付出</td></tr>
+      <tr class="warn"><th scope="row">供貨遲延 4.5 個月（已與上項相抵後）</th><td class="num negv">34,561,864.00</td><td>藥華藥付出</td></tr>
+      <tr class="warn"><th scope="row">2019–2021 藥物採購價格爭議退還款</th><td class="num negv">31,601,477.50</td><td>藥華藥退還，另加計利息（基礎利率＋5%，年利率上限 6%）</td></tr>
+      <tr><th scope="row">合計</th><td class="num negv">約 9,748 萬</td><td><span class="calc">推算</span>三項相加，未含利息</td></tr>
+    </tbody>
+  </table>
+  <p class="cap"><b>媒體換算的台幣金額彼此不一致，請以歐元原始數字為準：</b>自由財經將前兩項換算為約 11.64 億與 12.85 億台幣；MoneyDJ 標題寫「判賠 36 億」；風傳媒則寫「總計約 1.12 億歐元（約 41 億台幣）」。差異來自涵蓋項目與匯率假設不同，本報告不採用任何單一台幣數字作為結論。</p>
+  <p><b>公司的說法：</b>2025 年全年營收 156 億元、2026 年 1–7 月累計營收已近 145 億元，財務狀況健全；且自 2023 下半年起 AOP 積欠藥華藥的權利金加貨款已近 1 億歐元，因此判斷對財務業務無重大影響，並將研擬撤銷第二階段仲裁判斷。公司也澄清 AOP 對外宣稱的「積欠上億歐元」「超額定價最高達 900%」「另有約 6,500 萬歐元溢收款項」等說法，屬 AOP 單方推算，非仲裁庭裁定內容。</p>
+  <div class="key alert" style="margin-top:14px">
+    <b>怎麼看這件事：</b>兩邊的說法都要保留。公司主張可與 AOP 積欠的近 1 億歐元互抵，若成立，淨影響確實有限；但<span class="negv">互抵能否實現、以及撤銷程序能否成功，都還沒有定論</span>——第一階段的撤銷聲請已被法蘭克福高等法院駁回，目前只剩德國聯邦最高法院這一關。<br>
+    以規模感受來說：約 9,748 萬歐元對照公司帳上 <b>245 億元期末現金</b>，即使全額付出也不致動搖生存，但<b>會實質吃掉一個季度左右的營業現金流</b>——這是第一步規則五「A 落後 D」之外，另一個需要盯著現金的理由。
+  </div>
+
+
+  <h3><span class="no">深入 1</span>AOP 仲裁案的財務衝擊試算</h3>
+  <p>先講清楚這是<b>敏感度試算，不是預測</b>——最終金額取決於撤銷程序結果與互抵能否實現，兩者都還沒有定論。試算基礎為第二階段三項裁定合計 9,748 萬歐元（未含利息），匯率採用風傳媒報導中隱含的約 36.5（該報導將 1.12 億歐元換算為約 41 億台幣）。</p>
+  <table>
+    <thead><tr><th>對照基準</th><th class="num">金額（億元）</th><th class="num">仲裁金額占比</th><th>意義</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">仲裁裁定金額（推算台幣）</th><td class="num negv">約 35.6</td><td class="num">—</td><td><span class="calc">推算</span>9,748 萬歐元 × 36.5</td></tr>
+      <tr><th scope="row">2026 上半年期末現金（E）</th><td class="num">245</td><td class="num">14.5%</td><td>即使全額付出也不動搖生存</td></tr>
+      <tr class="warn"><th scope="row">2026 上半年營業現金流（A）</th><td class="num">41.3</td><td class="num negv">86%</td><td>約等於<b>大半年的本業現金流</b></td></tr>
+      <tr><th scope="row">2026 上半年稅後淨利</th><td class="num">46.8</td><td class="num">76%</td><td>約當上半年獲利的四分之三</td></tr>
+      <tr><th scope="row">換算每股影響</th><td class="num negv">約 8.4 元／股</td><td class="num">—</td><td><span class="calc">推算</span>35.6 億 ÷ 4.224 億股</td></tr>
+    </tbody>
+  </table>
+  <p><b>三種情境：</b></p>
+  <table>
+    <thead><tr><th>情境</th><th>假設</th><th class="num">淨現金影響</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">樂觀</th><td>撤銷成功，或與 AOP 積欠的近 1 億歐元完全互抵</td><td class="num posv">接近 0</td></tr>
+      <tr><th scope="row">中性</th><td>部分互抵、部分支付</td><td class="num">約 −10 至 −20 億</td></tr>
+      <tr class="warn"><th scope="row">保守</th><td>撤銷失敗且互抵不成立，全額支付並加計利息</td><td class="num negv">約 −36 億以上</td></tr>
+    </tbody>
+  </table>
+  <div class="key alert" style="margin-top:14px">
+    <b>試算中最重要的一個未知數：公司是否已在財報中提列相關負債準備？</b>本次搜尋<b>未查得</b>藥華藥 2026 Q2 合併財報附註對此案的會計處理。如果尚未提列，上表的保守情境會在未來某一期一次性衝擊損益；如果已提列，衝擊多半已反映在既有數字裡。<span class="negv">這一項必須查 Q2 合併財報附註才能確認，我不用推測填答。</span><br>
+    另外，公司主張的「AOP 積欠近 1 億歐元」目前是<b>公司單方說法</b>，第二階段裁定認定 AOP 應支付的積欠貨款及權利金為「超過 1,700 萬歐元」，兩個數字落差很大——前者是公司計算的累積應收（含 2023 下半年之後），後者是仲裁庭就 2019–2023 上半年裁定的部分。看似矛盾，其實是期間不同，但也代表<b>互抵的實際金額仍有很大彈性空間</b>。
+  </div>
+
+  <h3><span class="no">深入 2</span>ET 藥證通過後的營收想像空間</h3>
+  <p><b>先看市場規模的原始數字（公司法說會揭露）：</b></p>
+  <table>
+    <thead><tr><th>市場</th><th class="num">ET 患者數</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">美國</th><td class="num">約 14.8 萬人</td><td>公司預期隨診斷率提升，市場規模持續擴大</td></tr>
+      <tr><th scope="row">日本</th><td class="num">約 3 萬人</td><td>2025/09 送件時公司揭露</td></tr>
+    </tbody>
+  </table>
+  <p><b>再看法人怎麼把它換算成錢：</b></p>
+  <table>
+    <thead><tr><th>項目</th><th class="num">2026F</th><th class="num">2027F</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">營收（億元）</th><td class="num">283.87</td><td class="num">474.15</td></tr>
+      <tr><th scope="row">ET 營收占比</th><td class="num">1.6%</td><td class="num">13.7%</td></tr>
+      <tr><th scope="row">ET 營收（推算）</th><td class="num">約 4.5</td><td class="num">約 65.0</td></tr>
+      <tr><th scope="row">ET 新增病患數（另一法人初估）</th><td class="num">300 人</td><td class="num">800 人</td></tr>
+      <tr><th scope="row">稅後淨利（億元）</th><td class="num">108.56</td><td class="num">204.95</td></tr>
+      <tr><th scope="row">EPS（元）</th><td class="num">26.31</td><td class="num">49.66</td></tr>
+    </tbody>
+  </table>
+  <div class="key" style="margin-top:14px">
+    <b>把這張表拆開看，會得到一個和市場敘事不太一樣的結論：驅動 2027 年高成長的主力其實不是 ET，而是 PV。</b><br>
+    2027 年 ET 營收占比 13.7%，代表<b>非 ET（主要是 PV）營收約 409 億元</b>（<span class="calc">推算</span>474.15 × 86.3%）；2026 年非 ET 營收約 279 億元（<span class="calc">推算</span>283.87 × 98.4%）。也就是說，這份預估隱含<b>PV 業務在 2027 年還要再成長約 46%</b>（<span class="calc">推算</span>），而且是建立在 2026 年已經高成長的基礎上。<br>
+    <span class="negv">ET 是故事，PV 是數字。</span>如果 ET 順利取證但 PV 成長放緩，2027 年的 EPS 49.66 元一樣會落空——這是看這檔股票時容易被忽略的重點。
+  </div>
+  <p class="cap"><b>滲透率的現實感：</b>美國 ET 患者約 14.8 萬人，法人初估 2027 年新增病患僅 800 人，滲透率約 0.5%（<span class="calc">推算</span>，且該病患數估計未必只計美國）。這說明兩件事：一是 ET 的長期天花板確實很高，二是<b>短期內 ET 的實際營收貢獻相當有限</b>，2026 年僅約 1.6%。取證消息的股價反應，反映的是多年後的想像，不是明年的損益。</p>
+
+  <div class="key alert">
+    <b>一個必須指出的報導錯誤：</b>2026/08/14 有媒體以「藥華藥<b>取得</b>美 ET 藥證 法人喊買目標價 1775 元」為標題，但同一篇內文寫的是「<b>預計</b>於 8 月取得日本及美國的新增適應症 ET 藥證」。<span class="negv">截至本報告產出時，美國 ET 藥證尚未取得</span>，FDA 審查完成目標日為 2026/08/30。標題與內文矛盾時，以內文與公司公告為準。
+  </div>
+
+  <p><b>法人預估的可信度，要打一點折：</b>同一批法人在短短三個月內大幅上修目標價，而且上修方向與股價走勢高度同步。</p>
+  <table>
+    <thead><tr><th>時間</th><th class="num">當時股價</th><th class="num">2026F EPS</th><th class="num">目標價</th><th>評等</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2026/05</th><td class="num">826</td><td class="num">23.75</td><td class="num">950</td><td>買進（本益比 40 倍）</td></tr>
+      <tr><th scope="row">2026/08/14</th><td class="num">1,500</td><td class="num">—</td><td class="num">1,775</td><td>買進（40 倍，以 2027F EPS 計）</td></tr>
+      <tr><th scope="row">2026/08/17</th><td class="num">1,500</td><td class="num">25.95</td><td class="num">1,600</td><td>Trading Buy</td></tr>
+      <tr class="warn"><th scope="row">2026/08/17</th><td class="num">1,500</td><td class="num">26.31</td><td class="num">2,090</td><td>強力買進</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">EPS 預估從 23.75 上修到 26.31（+11%），目標價卻從 950 拉到 2,090（+120%）。<b>差別不在獲利預估，而在願意給幾倍本益比</b>，以及改用哪一年的 EPS 當基準。同一時間點的三家法人目標價落差達 490 元（1,600 vs 2,090），本身就說明估值假設分歧很大。有法人在 5 月的報告中提到，該公司本益比<b>歷史區間為 27 至 45 倍</b>——這是本報告找到唯一有明確出處的倍數基準，將在第 5 步用來對照。</p>
+
+  <h3><span class="no">深入 3</span>產能與併購：回頭校正規則二／三</h3>
+  <p>第一步只看得到 B 的總額。現在把已知的資金去向列出來，至少可以把「這筆錢花去哪」的輪廓補起來：</p>
+  <table>
+    <thead><tr><th>用途</th><th class="num">金額</th><th>性質</th><th>時點</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">收購 FORUS Therapeutics 100% 股權</th><td class="num">加幣 5,000 萬（約 11.5 億元）</td><td><b>子公司收購（併購）</b></td><td>董事會決議 2026/04/09</td></tr>
+      <tr><th scope="row">波多黎各建廠</th><td class="num">約 14.5 億元</td><td>固定資產</td><td>2027 年投產，分年投入</td></tr>
+      <tr><th scope="row">竹北新廠</th><td class="num">未查得</td><td>固定資產</td><td>2026 年底投產</td></tr>
+      <tr><th scope="row">台中廠第二條產線</th><td class="num">未查得</td><td>固定資產</td><td>已獲美歐核准</td></tr>
+      <tr><th scope="row">帳上 245 億現金的運用</th><td class="num">未知</td><td>可能含金融資產調度</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div class="key alert" style="margin-top:14px">
+    <b>⚠ 本段推算其後被季度明細推翻，請以「第 1 步再校正」1C-1 為準。</b>實際數字為：2026 上半年併購相關支出 17.3 億元（子公司收購 8 億＋預付投資款 9.3 億），真實資本支出 9.59 億元、佔 A 僅 23%。以下保留原始推論以供對照。
+  </div>
+  <div class="key" style="margin-top:14px">
+    <b>對規則二（投資紀律）的校正方向：偏正面，但幅度有限。</b>2026 上半年 B 為 −26.7 億元，其中若 FORUS 的 11.5 億元在上半年交割，就占了約 <b>43%</b>（<span class="calc">推算</span>）。扣掉併購後，真正的產能相關資本支出約 15.2 億元（<span class="calc">推算</span>），相對同期 A（41.3 億元）僅約 <b>37%</b>——投資紀律比只看總額時更好，不是「重砲擴產到失控」。<br>
+    <span class="negv">但這個推論有一個關鍵不確定性：FORUS 案 4/9 才由董事會決議，實際交割與付款時點未查得</span>，若款項落在下半年，上半年的 B 就全是其他用途，上述比例要重算。<b>因此規則二仍維持 85 分、狀態仍為暫定。</b>
+  </div>
+  <div class="key alert">
+    <b>對規則三（投資效益）的校正方向：需要更謹慎，不能加分。</b>規則三原本的邏輯是「投資後 1–2 年 A 是否轉強」。但現在知道 B 裡面含有併購——<b>併購買到的是現成的營收與通路（FORUS 原本就是 Ropeg 在加拿大的授權夥伴），效益本來就會快速反映在 A，這跟「蓋廠投資帶來產能效益」是兩件事</b>。用同一套標準給高分，等於把併購的即時效果誤認為資本支出的長期效益。<br>
+    另外，2026 年 3 月 CMS 將公司狀態改為「特定小型製造商」並<b>追溯自 2025/01/01 生效</b>，公司依 IFRS 認列調整——這很可能是 2026 Q2 毛利率高達 94.23%（Q1 為 87.87%、法人預估 Q3 回到約 91%）的原因之一。<span class="negv">追溯認列的收入未必同步收到現金，這正好對應第一步規則五「A 落後 D」的現象</span>，也提醒我們 Q2 的獲利品質裡有一部分是非經常性的。
+  </div>
+  <p class="cap"><b>結論不變：規則二、三、四的評分仍為暫定。</b>本次深入把「錢可能花去哪」的輪廓補起來了，但沒有取得投資活動明細的原始數字，就無法確認各項金額與時點，也就無法把暫定改為定案。</p>
+
+  <div class="snap-note">
+    <b>深入分析的額外資料來源：</b><br>
+    · FORUS Therapeutics 收購案（加幣 5,000 萬、約新台幣 11.5 億元、董事會決議 2026/04/09、FORUS 為 2024 年簽約的加拿大商業授權夥伴）：<a href="https://money.udn.com/money/story/5612/9432252">經濟日報</a>、<a href="https://www.cna.com.tw/news/afe/202604090331.aspx">中央社</a><br>
+    · 美國 ET 患者約 14.8 萬人、GCP 實地查核自 2026/02/23 起、2025 全年營收 156.3 億元年增 60.61%、本業獲利 49.3 億元、淨利 50.5 億元：<a href="https://geneonline.news/pharmaessentia-pv-et-pmf-2026-026news/">GeneOnline 2026-03-03 法說會報導</a><br>
+    · 日本約 3 萬名 ET 患者、日本 PMDA 2025/09 送件：<a href="https://www.genetinfo.com/investment/featured/item/89663.html">Genet 2025-09-18 報導</a><br>
+    · 2026F／2027F 營收 283.87／474.15 億元、ET 占比 1.6%／13.7%、淨利 108.56／204.95 億元、EPS 26.31／49.66 元、目標價 2,090 元；另一法人 2026F EPS 25.95 元、目標價 1,600 元；Q3 預估營收 75.64 億元、EPS 6.76 元、毛利率約 91%、CMS 追溯收入貢獻降低：<a href="https://www.setn.com/news/1889590">三立新聞網</a><br>
+    · 中信投顧目標價 1,775 元、本益比 40 倍、以 2027F EPS 計算，以及「取得美 ET 藥證」標題與內文不一致：<a href="https://newtalk.tw/news/view/2026-08-14/1053395">Newtalk 新聞 2026-08-14</a><br>
+    · 2026/05 法人預估 EPS 23.75 元、目標價 950 元、本益比歷史區間 27 至 45 倍、ET 新增病患數 2026 年 300 人／2027 年 800 人：<a href="https://tw.stock.yahoo.com/news/%E7%9B%AE%E6%A8%99%E5%83%B9%E8%AA%BF%E4%B8%8A%E8%87%B3950%E5%85%83-%E7%94%9F%E6%8A%80%E5%B7%A8%E9%A0%AD-2027%E5%85%A8%E5%B9%B4%E7%87%9F%E6%94%B6%E6%8C%91%E6%88%B0400%E5%84%84%E5%A4%A7%E9%97%9C-003000424.html">Yahoo 股市新聞（2026-05-17）</a><br>
+    · CMS 於 2026/03/26 通知改列「特定小型製造商」、追溯自 2025/01/01 生效、依 IFRS 認列調整：<a href="https://udn.com/news/story/7252/9423695">聯合新聞網 2026-04</a><br>
+    <b>未查得、刻意不填的項目：</b>公司是否已就 AOP 仲裁案提列負債準備；FORUS 案實際交割與付款時點；竹北廠與台中廠第二條產線的投資金額。
+  </div>
+  <div class="snap-note">
+    <b>本節資料來源（逐項對應）：</b><br>
+    · 2026/08/12 法說會內容、Ropeg 全球 50 國、7 月加拿大 PV 藥證、注射筆 7 月美國開賣、ET 各國時程、四項新藥進臨床：<a href="https://www.chinatimes.com/realtimenews/20260812003849-260410">中時新聞網／時報資訊 2026-08-12 法說會報導</a><br>
+    · ET 台灣 5/12 核准、美國 PDUFA 8/30、中國 11 月／韓國 12 月的法人預期：<a href="https://www.setn.com/news/1889590">三立新聞網 法說會後法人評等報導</a><br>
+    · 台中廠第二條產線、竹北廠 2026 年底投產、波多黎各廠 2027 投產與台美雙基地：<a href="https://geneonline.news/pharmaessentia-pv-et-pmf-2026-026news/">GeneOnline 2026-03-03 法說會報導</a>；波多黎各投資約 14.5 億元、日本高劑量方案 2 月核准、2.6 元股利提案、收購加拿大 FORUS Therapeutics：<a href="https://tw.stock.yahoo.com/news/%E8%97%A5%E8%8F%AF%E8%97%A5%E5%8E%BB%E5%B9%B4%E8%B3%BA%E6%96%B0%E9%AB%98-2026%E7%BA%8C%E8%A1%9D-201000670.html">工商時報／MoneyDJ 彙整（Yahoo 股市新聞頁）</a><br>
+    · HOPE-PMF 三期 2026 上半年完成收案、2025 全年營收 156.3 億元年增 60.61%：同上 GeneOnline 報導<br>
+    · AOP 仲裁第二階段裁定的歐元原始金額、案號 ICC Case No.25808/PTA/XZG、第一階段 2025/02/17、公司澄清內容、2026 年 1–7 月累計營收近 145 億元：<a href="https://www.genetinfo.com/investment/company-news/item/97217.html">Genet 轉載之公司重大訊息全文（2026/08/08）</a><br>
+    · 台幣換算 11.64 億／12.85 億：<a href="https://ec.ltn.com.tw/article/breakingnews/5533448">自由財經</a>；「判賠 36 億」標題：<a href="https://www.moneydj.com/kmdj/news/newsviewer.aspx?a=a34ca024-0f58-4914-ab00-f40d31069467">MoneyDJ</a>；「約 1.12 億歐元、約 41 億台幣」：<a href="https://www.storm.mg/article/11154998">風傳媒</a><br>
+    · 法蘭克福高等法院駁回、向德國聯邦最高法院上訴：<a href="https://www.genetinfo.com/investment/featured/item/95032.html">Genet 2026-05-03 報導</a><br>
+    <b>查證等級說明：</b>以上皆為財經媒體報導或媒體轉載之公司重大訊息全文。<b>我沒有直接讀取官方法說會簡報 PDF</b>——MOPS 官方簡報連結實測會被 robots.txt 擋下，無法解析內容。若要看原始簡報，請自行至公開資訊觀測站或公司官網 IR 專區下載。
+  </div>
+</section>
+
+<section id="step4">
+  <p class="steptag">第 4 步／共 6 步：營收趨勢視覺化</p>
+  <h2>營收有沒有跟上故事</h2>
+
+  <div class="key">
+    <b>一句話結論：有，而且很整齊。</b>2026 年 1–7 月每一個月的年增率都超過 <b>49%</b>，5 月起連續三個月維持在 <b>90% 以上</b>（5 月 +108.5%、6 月 +94.9%、7 月 +92.6%）。<b>7 月單月 25.07 億元創新高</b>，累計 144.8 億元、年增 77.5%，<b>七個月就做到 2025 年全年營收的 92.6%</b>（<span class="calc">推算</span>144.8 ÷ 156.3）。
+  </div>
+
+  <h3><span class="no">4-1</span>2026 年單月營收走勢</h3>
+  <svg viewBox="0 0 760 310" class="chart" role="img" aria-label="">
+<line x1="62" y1="264.0" x2="742" y2="264.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="268.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="184.7" x2="742" y2="184.7" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="188.7" text-anchor="end" class="tick">10</text>
+<line x1="62" y1="105.3" x2="742" y2="105.3" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="109.3" text-anchor="end" class="tick">20</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">30</text>
+<rect x="87.6" y="138.6" width="46.0" height="125.4" fill="#F2B8BE" rx="2"/>
+<text x="110.6" y="132.6" text-anchor="middle" class="vlab">15.8</text>
+<text x="110.6" y="294" text-anchor="middle" class="xlab">26/01</text>
+<rect x="184.7" y="137.1" width="46.0" height="126.9" fill="#0F6E5C" rx="2"/>
+<text x="207.7" y="131.1" text-anchor="middle" class="vlab">16</text>
+<text x="207.7" y="294" text-anchor="middle" class="xlab">26/02</text>
+<rect x="281.9" y="110.1" width="46.0" height="153.9" fill="#0F6E5C" rx="2"/>
+<text x="304.9" y="104.1" text-anchor="middle" class="vlab">19.4</text>
+<text x="304.9" y="294" text-anchor="middle" class="xlab">26/03</text>
+<rect x="379.0" y="100.3" width="46.0" height="163.7" fill="#0F6E5C" rx="2"/>
+<text x="402.0" y="94.3" text-anchor="middle" class="vlab">20.6</text>
+<text x="402.0" y="294" text-anchor="middle" class="xlab">26/04</text>
+<rect x="476.1" y="69.0" width="46.0" height="195.0" fill="#0F6E5C" rx="2"/>
+<text x="499.1" y="63.0" text-anchor="middle" class="vlab">24.6</text>
+<text x="499.1" y="294" text-anchor="middle" class="xlab">26/05</text>
+<rect x="573.3" y="78.9" width="46.0" height="185.1" fill="#0F6E5C" rx="2"/>
+<text x="596.3" y="72.9" text-anchor="middle" class="vlab">23.3</text>
+<text x="596.3" y="294" text-anchor="middle" class="xlab">26/06</text>
+<rect x="670.4" y="65.1" width="46.0" height="198.9" fill="#E8D48B" rx="2"/>
+<text x="693.4" y="59.1" text-anchor="middle" class="vlab">25.1</text>
+<text x="693.4" y="294" text-anchor="middle" class="xlab">26/07</text>
+<text x="54" y="16" text-anchor="end" class="unit">億元</text>
+</svg>
+  <p class="cap">單位：億元。米色為區間高峰、粉色為區間谷底。資料為使用者提供之 Goodinfo 月營收截圖。</p>
+  <p><b>形狀是階梯式上升，不是單邊直線。</b>1–2 月在 16 億元附近盤整，3 月起連三個月跳升（19.4 → 20.64 → 24.58），6 月小幅回落至 23.33 億元後，7 月再創高至 25.07 億元。<b>6 月的 −5.11% 月減不需要過度解讀</b>——月營收本來就有出貨節奏造成的波動，重點看的是年增率，而 6 月年增仍有 94.9%。</p>
+
+  <h3><span class="no">4-2</span>與去年同月的並排比較</h3>
+  <svg viewBox="0 0 760 330" class="chart">
+<line x1="62" y1="280.0" x2="742" y2="280.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="284.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="198.0" x2="742" y2="198.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="202.0" text-anchor="end" class="tick">10</text>
+<line x1="62" y1="116.0" x2="742" y2="116.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="120.0" text-anchor="end" class="tick">20</text>
+<line x1="62" y1="34.0" x2="742" y2="34.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="38.0" text-anchor="end" class="tick">30</text>
+<rect x="86.6" y="193.5" width="22.0" height="86.5" fill="#2E6F9E" rx="2"/>
+<text x="97.6" y="188.5" text-anchor="middle" class="vlab sm">10.6</text>
+<rect x="112.6" y="150.4" width="22.0" height="129.6" fill="#B4762C" rx="2"/>
+<text x="123.6" y="145.4" text-anchor="middle" class="vlab sm">15.8</text>
+<text x="110.6" y="312" text-anchor="middle" class="xlab">26/01</text>
+<rect x="183.7" y="196.2" width="22.0" height="83.8" fill="#2E6F9E" rx="2"/>
+<text x="194.7" y="191.2" text-anchor="middle" class="vlab sm">10.2</text>
+<rect x="209.7" y="148.8" width="22.0" height="131.2" fill="#B4762C" rx="2"/>
+<text x="220.7" y="143.8" text-anchor="middle" class="vlab sm">16</text>
+<text x="207.7" y="312" text-anchor="middle" class="xlab">26/02</text>
+<rect x="280.9" y="183.2" width="22.0" height="96.8" fill="#2E6F9E" rx="2"/>
+<text x="291.9" y="178.2" text-anchor="middle" class="vlab sm">11.8</text>
+<rect x="306.9" y="120.9" width="22.0" height="159.1" fill="#B4762C" rx="2"/>
+<text x="317.9" y="115.9" text-anchor="middle" class="vlab sm">19.4</text>
+<text x="304.9" y="312" text-anchor="middle" class="xlab">26/03</text>
+<rect x="378.0" y="179.5" width="22.0" height="100.5" fill="#2E6F9E" rx="2"/>
+<text x="389.0" y="174.5" text-anchor="middle" class="vlab sm">12.3</text>
+<rect x="404.0" y="110.8" width="22.0" height="169.2" fill="#B4762C" rx="2"/>
+<text x="415.0" y="105.8" text-anchor="middle" class="vlab sm">20.6</text>
+<text x="402.0" y="312" text-anchor="middle" class="xlab">26/04</text>
+<rect x="475.1" y="183.3" width="22.0" height="96.7" fill="#2E6F9E" rx="2"/>
+<text x="486.1" y="178.3" text-anchor="middle" class="vlab sm">11.8</text>
+<rect x="501.1" y="78.4" width="22.0" height="201.6" fill="#B4762C" rx="2"/>
+<text x="512.1" y="73.4" text-anchor="middle" class="vlab sm">24.6</text>
+<text x="499.1" y="312" text-anchor="middle" class="xlab">26/05</text>
+<rect x="572.3" y="181.8" width="22.0" height="98.2" fill="#2E6F9E" rx="2"/>
+<text x="583.3" y="176.8" text-anchor="middle" class="vlab sm">12</text>
+<rect x="598.3" y="88.7" width="22.0" height="191.3" fill="#B4762C" rx="2"/>
+<text x="609.3" y="83.7" text-anchor="middle" class="vlab sm">23.3</text>
+<text x="596.3" y="312" text-anchor="middle" class="xlab">26/06</text>
+<rect x="669.4" y="173.2" width="22.0" height="106.8" fill="#2E6F9E" rx="2"/>
+<text x="680.4" y="168.2" text-anchor="middle" class="vlab sm">13</text>
+<rect x="695.4" y="74.4" width="22.0" height="205.6" fill="#B4762C" rx="2"/>
+<text x="706.4" y="69.4" text-anchor="middle" class="vlab sm">25.1</text>
+<text x="693.4" y="312" text-anchor="middle" class="xlab">26/07</text>
+<text x="54" y="20" text-anchor="end" class="unit">億元</text>
+<rect x="62" y="8" width="11" height="11" fill="#2E6F9E" rx="2"/>
+<text x="79" y="18" class="leg">2025 同月（推算）</text>
+<rect x="157" y="8" width="11" height="11" fill="#B4762C" rx="2"/>
+<text x="174" y="18" class="leg">2026 單月（實際）</text>
+</svg>
+  <div class="legend-note"><span><span class="sw" style="background:#2E6F9E"></span>2025 同月（推算）</span>
+    <span><span class="sw" style="background:#B4762C"></span>2026 單月（實際）</span></div>
+  <p class="cap">2025 年同月數字為<span class="calc">推算</span>——以 2026 年單月營收 ÷（1＋年增率）反推而得，Goodinfo 截圖本身未直接列出。驗算：反推之 1–7 月合計 81.61 億元，與「累計 144.8 億元、年增 77.5%」反推的 81.58 億元相符（差異 0.03 億來自四捨五入），可確認推算方式正確。</p>
+  <p><b>看得最清楚的一件事是「差距在拉開」。</b>1 月兩根長條差 5.26 億元，7 月差到 12.05 億元（<span class="calc">推算</span>）。基期在墊高，年增率卻沒有掉下來，代表增量本身也在加速，不是只有比較基準低。</p>
+
+  <h3><span class="no">4-3</span>年增率</h3>
+  <svg viewBox="0 0 760 300" class="chart" role="img" aria-label="">
+<line x1="62" y1="254.0" x2="742" y2="254.0" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="258.0" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="208.4" x2="742" y2="208.4" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="212.4" text-anchor="end" class="tick">25</text>
+<line x1="62" y1="162.8" x2="742" y2="162.8" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="166.8" text-anchor="end" class="tick">50</text>
+<line x1="62" y1="117.2" x2="742" y2="117.2" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="121.2" text-anchor="end" class="tick">75</text>
+<line x1="62" y1="71.6" x2="742" y2="71.6" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="75.6" text-anchor="end" class="tick">100</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">125</text>
+<rect x="87.6" y="163.2" width="46.0" height="90.8" fill="#F2B8BE" rx="2"/>
+<text x="110.6" y="157.2" text-anchor="middle" class="vlab">49.8</text>
+<text x="110.6" y="284" text-anchor="middle" class="xlab">26/01</text>
+<rect x="184.7" y="150.8" width="46.0" height="103.2" fill="#0F6E5C" rx="2"/>
+<text x="207.7" y="144.8" text-anchor="middle" class="vlab">56.6</text>
+<text x="207.7" y="284" text-anchor="middle" class="xlab">26/02</text>
+<rect x="281.9" y="136.5" width="46.0" height="117.5" fill="#0F6E5C" rx="2"/>
+<text x="304.9" y="130.5" text-anchor="middle" class="vlab">64.4</text>
+<text x="304.9" y="284" text-anchor="middle" class="xlab">26/03</text>
+<rect x="379.0" y="129.4" width="46.0" height="124.6" fill="#0F6E5C" rx="2"/>
+<text x="402.0" y="123.4" text-anchor="middle" class="vlab">68.3</text>
+<text x="402.0" y="284" text-anchor="middle" class="xlab">26/04</text>
+<rect x="476.1" y="56.1" width="46.0" height="197.9" fill="#E8D48B" rx="2"/>
+<text x="499.1" y="50.1" text-anchor="middle" class="vlab">108</text>
+<text x="499.1" y="284" text-anchor="middle" class="xlab">26/05</text>
+<rect x="573.3" y="80.9" width="46.0" height="173.1" fill="#0F6E5C" rx="2"/>
+<text x="596.3" y="74.9" text-anchor="middle" class="vlab">94.9</text>
+<text x="596.3" y="284" text-anchor="middle" class="xlab">26/06</text>
+<rect x="670.4" y="85.1" width="46.0" height="168.9" fill="#0F6E5C" rx="2"/>
+<text x="693.4" y="79.1" text-anchor="middle" class="vlab">92.6</text>
+<text x="693.4" y="284" text-anchor="middle" class="xlab">26/07</text>
+<text x="54" y="16" text-anchor="end" class="unit">%</text>
+</svg>
+  <p class="cap">單位：%。</p>
+  <p>年增率從 1 月的 49.8% 一路走高到 5 月的 108.5%，之後兩個月維持在九成以上。<b>5 月是明顯的斷點</b>——這個時間點與兩件事重疊：Ropeg 於 <b>5/12 取得台灣 ET 藥證</b>，以及 <b>CMS 於 3 月將公司改列「特定小型製造商」並追溯自 2025/01/01 生效</b>。第二項是會計認列的調整，可能同時墊高了營收與毛利率（Q2 毛利率 94.23%，Q1 為 87.87%）。<span class="negv">也就是說，5–7 月的高年增率裡，有一部分可能不是純粹的銷售放量。</span></p>
+
+  <h3><span class="no">4-4</span>完整月營收數據</h3>
+  <table>
+    <thead><tr><th>月份</th><th class="num">單月營收</th><th class="num">月增</th><th class="num">年增</th><th class="num">累計營收</th><th class="num">2025 同月（推算）</th></tr></thead>
+    <tbody><tr><th scope="row">26/01</th><td class="num">15.81</td><td class="num negv">-17.8%</td><td class="num posv">+49.8%</td><td class="num">15.81</td><td class="num why">10.55</td></tr>
+<tr><th scope="row">26/02</th><td class="num">16.0</td><td class="num posv">+1.24%</td><td class="num posv">+56.6%</td><td class="num">31.81</td><td class="num why">10.22</td></tr>
+<tr><th scope="row">26/03</th><td class="num">19.4</td><td class="num posv">+21.2%</td><td class="num posv">+64.4%</td><td class="num">51.21</td><td class="num why">11.8</td></tr>
+<tr><th scope="row">26/04</th><td class="num">20.64</td><td class="num posv">+6.39%</td><td class="num posv">+68.3%</td><td class="num">71.86</td><td class="num why">12.26</td></tr>
+<tr><th scope="row">26/05</th><td class="num">24.58</td><td class="num posv">+19.1%</td><td class="num posv">+108.5%</td><td class="num">96.44</td><td class="num why">11.79</td></tr>
+<tr><th scope="row">26/06</th><td class="num">23.33</td><td class="num negv">-5.11%</td><td class="num posv">+94.9%</td><td class="num">119.8</td><td class="num why">11.97</td></tr>
+<tr><th scope="row">26/07</th><td class="num">25.07</td><td class="num posv">+7.47%</td><td class="num posv">+92.6%</td><td class="num">144.8</td><td class="num why">13.02</td></tr></tbody>
+  </table>
+  <p class="cap">單位：億元。最後一欄為反推數字，非 Goodinfo 頁面直接列出。</p>
+
+  <h3><span class="no">4-5</span>季度對照與交叉驗證</h3>
+  <table>
+    <thead><tr><th>期間</th><th class="num">月營收加總</th><th class="num">官方／法人數字</th><th>核對</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2026 Q1</th><td class="num">51.21</td><td class="num">51.2（官方）</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">2026 Q2</th><td class="num">68.55</td><td class="num">68.6（官方）</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">2026 上半年</th><td class="num">119.8</td><td class="num">119.8（官方）</td><td><span class="pass">✅ 一致</span></td></tr>
+      <tr><th scope="row">2026 Q3</th><td class="num">25.07（僅 7 月）</td><td class="num">75.64（法人預估）</td><td><span class="why">進行中</span></td></tr>
+    </tbody>
+  </table>
+  <p class="cap">使用者提供的月營收截圖與官方法說會數字完全對得上，資料可信。</p>
+
+  <h3><span class="no">4-6</span>用營收檢驗法人預估合不合理</h3>
+  <table>
+    <thead><tr><th>檢驗項目</th><th class="num">已達成</th><th class="num">剩餘需求</th><th>難度判斷</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Q3 營收 75.64 億（法人估）</th><td class="num">25.07（7 月）</td><td class="num">8–9 月各需 25.29 億</td><td class="tag-good">與 7 月持平即可達標</td></tr>
+      <tr class="warn"><th scope="row">全年營收 283.87 億（法人估）</th><td class="num">144.8（1–7 月）</td><td class="num">8–12 月各需 27.81 億</td><td class="tag-ok">需比 7 月再成長約 11%</td></tr>
+    </tbody>
+  </table>
+  <div class="key" style="margin-top:14px">
+    <b>這是本步驟最實用的一張表。</b>法人估的 Q3 營收，<b>只要 8、9 月維持 7 月的水準就會達標</b>——門檻並不高。但全年 283.87 億元的預估，需要 8–12 月的月均營收比 7 月再往上約 <b>11%</b>（<span class="calc">推算</span>27.81 ÷ 25.07）。<br>
+    這個增量必須由兩件還沒發生完的事來補：<b>7 月才在美國開賣的注射筆</b>（尚未貢獻完整季度），以及 <b>ET 藥證取證後的新增銷售</b>（美國 PDUFA 目標日 8/30，日本、中國、韓國排在後面）。若這兩項延後或放量不如預期，全年營收預估就會落空——<span class="negv">而第 3 步已經算過，法人 2027 年 EPS 49.66 元的預估，隱含的是 PV 業務再成長 46%，不是 ET</span>，所以真正該盯的是月營收能不能持續墊高，而不只是藥證新聞。
+  </div>
+
+  <p class="cap"><b>順帶澄清一個容易誤讀的欄位：</b>截圖顯示 2026 年 7 月股價月線下跌 20.9%（開盤 1,380、收盤 1,060），但這不是單純的股價重挫——<b>公司在 7/9 除權息</b>（配股 1.0928 元、現金股利 1.4902 元），除權息本身就會使參考價調降約 10%（<span class="calc">推算</span>），約占該月跌幅的一半。且 8/14 收盤已回到 1,500 元。</p>
+
+  <div class="snap-note">
+    <b>本節資料來源：</b><br>
+    · 2026 年 1–7 月單月營收、月增率、年增率、累計營收、當月股價：<b>使用者提供之 Goodinfo 月營收頁面截圖</b>（<a href="https://goodinfo.tw/tw/ShowSaleMonChart.asp?STOCK_ID=6446">goodinfo.tw/tw/ShowSaleMonChart.asp?STOCK_ID=6446</a>）。非本次搜尋所得。<br>
+    · 2025 年同月營收：<span class="calc">推算</span>由當月營收與年增率反推，並以累計數交叉驗證。<br>
+    · 官方 Q1／Q2／上半年營收、Q3 法人預估 75.64 億元、全年預估 283.87 億元：見第 2、3 步已列之中時新聞網、三立新聞網來源。<br>
+    · 2025 全年營收 156.3 億元：<a href="https://geneonline.news/pharmaessentia-pv-et-pmf-2026-026news/">GeneOnline 2026-03-03 法說會報導</a>。<br>
+    · CMS 改列「特定小型製造商」追溯生效：<a href="https://udn.com/news/story/7252/9423695">聯合新聞網 2026-04</a>。
+  </div>
+</section>
+
+<section id="step5">
+  <p class="steptag">第 5 步／共 6 步：前瞻本益比／EPS 預估</p>
+  <h2>現在這個價格，是在買哪一年的獲利</h2>
+
+  <div class="key">
+    <b>一句話結論：以 1,500 元計算，這個價格已經把 2027 年的獲利提前反映了。</b>用 2026 年預估 EPS 算，前瞻本益比約 <b>57 倍</b>；用 2027 年預估 EPS 算，降到約 <b>32 倍</b>。而唯一有出處的倍數基準是「本益比歷史區間 27 至 45 倍」——<b>2026 年的獲利放進這個區間，撐不出 1,500 元；2027 年的獲利可以。</b>
+  </div>
+
+  <div class="key alert">
+    <b>兩個名詞先分清楚，本報告全程不混用：</b>「前瞻本益比」是<b>已知股價、求隱含倍數</b>（現在貴不貴）；「目標本益比法」是<b>已知倍數、求目標價</b>（合理價可能落在哪）。兩者是同一條公式的兩種用法，<span class="negv">不是同一件事</span>。後者的結果對「倍數怎麼選」極度敏感，只是敏感度試算，不是預測。
+  </div>
+
+  <h3><span class="no">5-1</span>EPS：實際與預估</h3>
+  <svg viewBox="0 0 760 330" class="chart" role="img" aria-label="">
+<line x1="62" y1="284.0" x2="742" y2="284.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="288.0" text-anchor="end" class="tick">-20</text>
+<line x1="62" y1="219.5" x2="742" y2="219.5" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="223.5" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="155.0" x2="742" y2="155.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="159.0" text-anchor="end" class="tick">20</text>
+<line x1="62" y1="90.5" x2="742" y2="90.5" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="94.5" text-anchor="end" class="tick">40</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">60</text>
+<rect x="95.7" y="219.5" width="46.0" height="15.6" fill="#F2B8BE" rx="2"/>
+<text x="118.7" y="249.1" text-anchor="middle" class="vlab">-4.84</text>
+<text x="118.7" y="314" text-anchor="middle" class="xlab">2022</text>
+<rect x="209.0" y="219.5" width="46.0" height="6.2" fill="#C4453B" rx="2"/>
+<text x="232.0" y="239.7" text-anchor="middle" class="vlab">-1.93</text>
+<text x="232.0" y="314" text-anchor="middle" class="xlab">2023</text>
+<rect x="322.3" y="190.6" width="46.0" height="28.9" fill="#0F6E5C" rx="2"/>
+<text x="345.3" y="184.6" text-anchor="middle" class="vlab">8.96</text>
+<text x="345.3" y="314" text-anchor="middle" class="xlab">2024</text>
+<rect x="435.7" y="175.5" width="46.0" height="44.0" fill="#E8D48B" rx="2"/>
+<text x="458.7" y="169.5" text-anchor="middle" class="vlab">13.6</text>
+<text x="458.7" y="314" text-anchor="middle" class="xlab">2025</text>
+<rect x="549.0" y="135.3" width="46.0" height="84.2" fill="rgba(15,110,92,0.14)" stroke="#6B7A85" stroke-width="1.3" stroke-dasharray="4 3" rx="2"/>
+<text x="572.0" y="129.3" text-anchor="middle" class="vlab q">26.1</text>
+<text x="572.0" y="314" text-anchor="middle" class="xlab q">2026F</text>
+<rect x="662.3" y="67.9" width="46.0" height="151.6" fill="rgba(15,110,92,0.14)" stroke="#6B7A85" stroke-width="1.3" stroke-dasharray="4 3" rx="2"/>
+<text x="685.3" y="61.9" text-anchor="middle" class="vlab q">47</text>
+<text x="685.3" y="314" text-anchor="middle" class="xlab q">2027F</text>
+<text x="54" y="16" text-anchor="end" class="unit">元</text>
+</svg>
+  <p class="cap">單位：元。虛線框為 2026、2027 年<b>法人預估值</b>（取多家中位），非實際數字，僅供參考。</p>
+  <table>
+    <thead><tr><th>期間</th><th class="num">EPS（元）</th><th>來源／說明</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2024（實際）</th><td class="num posv">8.96</td><td>首度轉盈</td></tr>
+      <tr><th scope="row">2025（實際）</th><td class="num posv">13.64</td><td>配股前股本基礎</td></tr>
+      <tr><th scope="row">2026 上半年（實際）</th><td class="num posv">11.35</td><td>官方法說會</td></tr>
+      <tr><th scope="row">近四季合計（推算）</th><td class="num posv">約 19.90</td><td><span class="calc">推算</span>混合配股前後基礎，僅供概略參考</td></tr>
+      <tr class="warn"><th scope="row">2026F</th><td class="num">23.75 ～ 26.31</td><td>三家法人：23.75（5 月）／25.95／26.31</td></tr>
+      <tr class="warn"><th scope="row">2027F</th><td class="num">約 44.4 ～ 49.66</td><td>49.66 為明列數字；44.4 為<span class="calc">推算</span>（目標價 1,775 ÷ 該法人採用的 40 倍）</td></tr>
+    </tbody>
+  </table>
+  <p class="cap"><b>2027 年只找到一家法人明確列出 EPS 數字（49.66 元）</b>，另一家僅公布「以 2027 年預估 EPS、40 倍本益比得出目標價 1,775 元」，故其 EPS 為反推。資料點偏少，區間本身的可信度有限，這一點不隱瞞。</p>
+
+  <h3><span class="no">5-2</span>前瞻本益比：現在貴不貴</h3>
+  <table>
+    <thead><tr><th>基準</th><th class="num">EPS（元）</th><th class="num">前瞻本益比</th><th>是否落在 27–45 倍區間內</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">近四季（trailing）</th><td class="num">19.90</td><td class="num negv">75.4 倍</td><td class="fail">遠高於區間</td></tr>
+      <tr><th scope="row">2026F 保守（5 月估）</th><td class="num">23.75</td><td class="num negv">63.2 倍</td><td class="fail">高於區間</td></tr>
+      <tr><th scope="row">2026F 中位</th><td class="num">26.1</td><td class="num negv">57.5 倍</td><td class="fail">高於區間</td></tr>
+      <tr class="warn"><th scope="row">2027F 保守（推算）</th><td class="num">44.4</td><td class="num">33.8 倍</td><td class="pass">落在區間內</td></tr>
+      <tr class="warn"><th scope="row">2027F 樂觀</th><td class="num">49.66</td><td class="num">30.2 倍</td><td class="pass">落在區間下緣</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">股價一律採 2026/08/14 收盤 1,500 元（Yahoo 股市快照）。本益比皆為<span class="calc">推算</span>。</p>
+  <p><b>這張表就是整份估值分析的核心。</b>1,500 元對應 2026 年獲利是 57 倍，明顯站在「本益比歷史區間 27–45 倍」之上；要讓倍數回到區間內，必須<b>直接跳到 2027 年的預估獲利</b>。換句話說，<span class="negv">現在買進的人，是在用 2027 年的獲利在付今天的價格，中間隔了約一年半的執行風險</span>。</p>
+
+  <h3><span class="no">5-3</span>目標本益比法：合理價可能落在哪</h3>
+  <table>
+    <thead><tr><th>假設倍數</th><th class="num">套用 2026F EPS 26.1 元</th><th class="num">套用 2027F EPS 47.0 元</th></tr></thead>
+    <tbody><tr><th scope="row">27 倍</th><td class="num">705</td><td class="num">1,269</td></tr>
+<tr><th scope="row">35 倍</th><td class="num">914</td><td class="num">1,645</td></tr>
+<tr><th scope="row">45 倍</th><td class="num">1,174</td><td class="num">2,115</td></tr></tbody>
+  </table>
+  <p class="cap">單位：元，皆為<span class="calc">推算</span>。倍數選用 27／35／45，對應某法人於 2026 年 5 月報告中提到的「本益比歷史區間 27 至 45 倍」，取下緣、中位、上緣三檔。</p>
+  <div class="key" style="margin-top:14px">
+    <b>試算結果最直白的一句話：</b>用 2026 年獲利，就算給到歷史區間<b>上緣的 45 倍</b>，目標價也只有約 <b>1,175 元</b>，低於現價 1,500 元；要撐住 1,500 元，必須用 2027 年獲利、且倍數約 <b>32 倍</b>以上。<br>
+    <span class="negv">這不代表股價會跌回 1,175 元</span>——高成長股在成長確立期用未來獲利定價是常態。但它清楚說明：<b>目前的價格沒有留下太多犯錯空間</b>，2027 年的成長一旦不如預期，倍數與 EPS 會同時往下調整。
+  </div>
+
+  <h3><span class="no">5-4</span>誠實揭露：這些預估有多不確定</h3>
+  <table>
+    <thead><tr><th>時間</th><th class="num">當時股價</th><th class="num">2026F EPS</th><th class="num">目標價</th><th class="num">EPS／目標價變動</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">2026/05</th><td class="num">826</td><td class="num">23.75</td><td class="num">950</td><td class="num">基準</td></tr>
+      <tr class="warn"><th scope="row">2026/08</th><td class="num">1,500</td><td class="num">26.31</td><td class="num">2,090</td><td class="num negv">EPS +11%／目標價 +120%</td></tr>
+    </tbody>
+  </table>
+  <p><b>三個必須講清楚的不確定性：</b></p>
+  <table>
+    <thead><tr><th>風險</th><th>內容</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">① 目標價跟著股價跑</th><td>三個月內獲利預估只上修 11%，目標價卻拉高 120%。<b>差別在願意給幾倍本益比、以及改用哪一年 EPS 當基準，不在基本面預估本身。</b>同一時間點三家法人目標價從 1,600 到 2,090，落差 490 元。</td></tr>
+      <tr class="warn"><th scope="row">② 2027 年的成長主力不是 ET</th><td>第 3 步已拆解：2027F 營收 474 億中 ET 僅占 13.7%，隱含<b>PV 業務還要再成長約 46%</b>。ET 取證是題材，但撐起 EPS 49.66 元的是 PV 的持續放量。</td></tr>
+      <tr><th scope="row">③ 股本可能再稀釋</th><td>法人 EPS 預估反推的股數約 4.126 億股（<span class="calc">推算</span>108.56 ÷ 26.31），等於<b>假設 2027 年股數不變</b>。但公司 2025 年度才配發 1.0928 元股票股利、股數增加 10.7%；若 2026 年度再配股一成，2027 年 EPS 會被稀釋到約 <b>42.7 元</b>（<span class="calc">推算</span>47.0 ÷ 1.10），前瞻本益比隨之由 31.9 倍升至約 <b>35.1 倍</b>。</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="no">5-5</span>把現金流的視角接回估值</h3>
+  <div class="key alert">
+    <b>估值談的是每股盈餘，但第 1 步提醒過：這家公司的盈餘還沒有完全變成現金。</b><br>
+    2026 上半年 EPS 11.35 元、稅前淨利 55.3 億元，同期<span class="negv">營業活動現金流（A）只有 41.3 億元，落後約 14 億</span>；規則五十年來只通過 1 次。若用 A 而非淨利去換算，上半年的「每股營業現金流」約為 <b>9.8 元</b>（<span class="calc">推算</span>41.3 ÷ 4.224 億股），比 EPS 低約 14%。<br>
+    再疊加第 3 步的 AOP 仲裁（保守情境約 −36 億元，相當於每股 8.4 元）與 CMS 追溯認列可能墊高的非經常性獲利，<b>用 EPS 算出來的本益比，可能比用現金衡量的真實估值更好看一些。</b>這不是否定成長，而是說明為什麼「現金流優先」的框架，在這種高本益比的成長股上特別值得堅持。
+  </div>
+
+  <div class="snap-note">
+    <b>本節資料來源：</b><br>
+    · <b>股價更新提醒：</b>後續資料顯示 2026/08/17 收盤已回落至 1,410 元；本節倍數以 1,500 元計算，<b>重算版本請見第 6 步 6-0</b>。<br>· 股價 1,500 元（2026/08/14 收盤）：<a href="https://tw.stock.yahoo.com/quote/6446.TW">Yahoo 股市 6446</a><br>
+    · 2026F EPS 26.31 元、2027F EPS 49.66 元、目標價 2,090 元；另一法人 2026F EPS 25.95 元、目標價 1,600 元：<a href="https://www.setn.com/news/1889590">三立新聞網</a><br>
+    · 中信投顧目標價 1,775 元、本益比 40 倍、以 2027F EPS 計算：<a href="https://newtalk.tw/news/view/2026-08-14/1053395">Newtalk 新聞 2026-08-14</a><br>
+    · 2026/05 法人 EPS 23.75 元、目標價 950 元、<b>本益比歷史區間 27 至 45 倍</b>：<a href="https://tw.stock.yahoo.com/news/%E7%9B%AE%E6%A8%99%E5%83%B9%E8%AA%BF%E4%B8%8A%E8%87%B3950%E5%85%83-%E7%94%9F%E6%8A%80%E5%B7%A8%E9%A0%AD-2027%E5%85%A8%E5%B9%B4%E7%87%9F%E6%94%B6%E6%8C%91%E6%88%B0400%E5%84%84%E5%A4%A7%E9%97%9C-003000424.html">Yahoo 股市新聞（2026-05-17）</a><br>
+    · 實際 EPS（2022–2025、2026 上半年）：見第 2 步已列之 Yahoo 股市與中時新聞網來源。<br>
+    <b>本節所有本益比、目標價、每股營業現金流、稀釋後 EPS 皆為<span class="calc">推算</span>數字</b>，非法人或公司公布的原始數值；「本益比歷史區間 27 至 45 倍」是本次唯一找到有明確出處的倍數基準，非本報告自行認定的產業平均。
+  </div>
+</section>
+
+<section id="step6">
+  <p class="steptag">第 6 步／共 6 步：投資決策推理</p>
+  <h2>把六步的訊號放在一起</h2>
+
+  <div class="key alert">
+    <b>先講清楚這一步是什麼、不是什麼。</b>以下是<b>推理過程的攤開</b>，不是投資建議，也不是買賣訊號。我沒有你的資金規模、持有期間、風險承受度與既有部位，而這些才是決定該不該買的關鍵。<span class="negv">最終判斷請你自己做。</span>
+  </div>
+
+  <h3><span class="no">6-0</span>先更新兩個關鍵數字</h3>
+  <p>你新提供的融資融券資料，讓兩件事必須修正：</p>
+  <table>
+    <thead><tr><th>項目</th><th class="num">第 2、5 步採用</th><th class="num">最新（2026/08/17）</th><th>影響</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">收盤價</th><td class="num">1,500（08/14）</td><td class="num">1,410（−90，−6.00%）</td><td>估值須重算</td></tr>
+      <tr><th scope="row">融資餘額</th><td class="num">8,450 張（06/05，已過期）</td><td class="num">8,913 張，使用率 8.44%</td><td>籌碼資料已更新</td></tr>
+    </tbody>
+  </table>
+  <p><b>重算後的前瞻本益比（股價 1,410 元）：</b></p>
+  <table>
+    <thead><tr><th>基準</th><th class="num">EPS（元）</th><th class="num">前瞻本益比</th><th>對照 27–45 倍區間</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">近四季（trailing）</th><td class="num">19.90</td><td class="num negv">70.9 倍</td><td class="fail">遠高於區間</td></tr>
+      <tr class="warn"><th scope="row">2026F 中位</th><td class="num">26.1</td><td class="num negv">54.0 倍</td><td class="fail">高於區間</td></tr>
+      <tr><th scope="row">2027F 中位</th><td class="num">47.0</td><td class="num">30.0 倍</td><td class="pass">落在區間內</td></tr>
+      <tr><th scope="row">2027F 樂觀</th><td class="num">49.66</td><td class="num">28.4 倍</td><td class="pass">落在區間下緣</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">第 5 步的核心結論不變、只是幅度緩和：<b>股價回到 1,410 元後，仍必須用 2027 年的獲利，倍數才能回到歷史區間內</b>。以 2026 年獲利計算，即使給到區間上緣 45 倍，目標價也僅約 1,174 元（<span class="calc">推算</span>）。</p>
+
+  <h3><span class="no">6-1</span>籌碼面：融資在漲勢中持續墊高</h3>
+  <svg viewBox="0 0 760 290" class="chart" role="img" aria-label="">
+<line x1="62" y1="244.0" x2="742" y2="244.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="248.0" text-anchor="end" class="tick">-100</text>
+<line x1="62" y1="200.4" x2="742" y2="200.4" stroke="#4A5A66" stroke-width="1.4"  />
+<text x="54" y="204.4" text-anchor="end" class="tick">0</text>
+<line x1="62" y1="156.8" x2="742" y2="156.8" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="160.8" text-anchor="end" class="tick">100</text>
+<line x1="62" y1="113.2" x2="742" y2="113.2" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="117.2" text-anchor="end" class="tick">200</text>
+<line x1="62" y1="69.6" x2="742" y2="69.6" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="73.6" text-anchor="end" class="tick">300</text>
+<line x1="62" y1="26.0" x2="742" y2="26.0" stroke="#D9E0E4" stroke-width="1" stroke-dasharray='3 4' />
+<text x="54" y="30.0" text-anchor="end" class="tick">400</text>
+<rect x="77.0" y="117.6" width="38.1" height="82.8" fill="#0F6E5C" rx="2"/>
+<text x="96.0" y="111.6" text-anchor="middle" class="vlab">190</text>
+<text x="96.0" y="274" text-anchor="middle" class="xlab">08/04</text>
+<rect x="145.0" y="152.0" width="38.1" height="48.4" fill="#0F6E5C" rx="2"/>
+<text x="164.0" y="146.0" text-anchor="middle" class="vlab">111</text>
+<text x="164.0" y="274" text-anchor="middle" class="xlab">08/05</text>
+<rect x="213.0" y="45.2" width="38.1" height="155.2" fill="#E8D48B" rx="2"/>
+<text x="232.0" y="39.2" text-anchor="middle" class="vlab">356</text>
+<text x="232.0" y="274" text-anchor="middle" class="xlab">08/06</text>
+<rect x="281.0" y="111.5" width="38.1" height="88.9" fill="#0F6E5C" rx="2"/>
+<text x="300.0" y="105.5" text-anchor="middle" class="vlab">204</text>
+<text x="300.0" y="274" text-anchor="middle" class="xlab">08/07</text>
+<rect x="349.0" y="174.7" width="38.1" height="25.7" fill="#0F6E5C" rx="2"/>
+<text x="368.0" y="168.7" text-anchor="middle" class="vlab">59</text>
+<text x="368.0" y="274" text-anchor="middle" class="xlab">08/10</text>
+<rect x="417.0" y="150.3" width="38.1" height="50.1" fill="#0F6E5C" rx="2"/>
+<text x="436.0" y="144.3" text-anchor="middle" class="vlab">115</text>
+<text x="436.0" y="274" text-anchor="middle" class="xlab">08/11</text>
+<rect x="485.0" y="181.2" width="38.1" height="19.2" fill="#0F6E5C" rx="2"/>
+<text x="504.0" y="175.2" text-anchor="middle" class="vlab">44</text>
+<text x="504.0" y="274" text-anchor="middle" class="xlab">08/12</text>
+<rect x="553.0" y="167.7" width="38.1" height="32.7" fill="#0F6E5C" rx="2"/>
+<text x="572.0" y="161.7" text-anchor="middle" class="vlab">75</text>
+<text x="572.0" y="274" text-anchor="middle" class="xlab">08/13</text>
+<rect x="621.0" y="189.9" width="38.1" height="10.5" fill="#0F6E5C" rx="2"/>
+<text x="640.0" y="183.9" text-anchor="middle" class="vlab">24</text>
+<text x="640.0" y="274" text-anchor="middle" class="xlab">08/14</text>
+<rect x="689.0" y="200.4" width="38.1" height="2.2" fill="#F2B8BE" rx="2"/>
+<text x="708.0" y="216.6" text-anchor="middle" class="vlab">-5</text>
+<text x="708.0" y="274" text-anchor="middle" class="xlab">08/17</text>
+<text x="54" y="16" text-anchor="end" class="unit">張</text>
+</svg>
+  <p class="cap">單日融資增減（張）。米色為區間高峰、粉色為區間谷底。</p>
+  <table>
+    <thead><tr><th>日期</th><th class="num">收盤</th><th class="num">漲跌</th><th class="num">成交(張)</th><th class="num">融資增減</th><th class="num">融資餘額</th><th class="num">使用率</th><th class="num">資券當沖</th></tr></thead>
+    <tbody><tr><th scope="row">08/04</th><td class="num">1,215</td><td class="num posv">+4.29%</td><td class="num">4,174</td><td class="num posv">+190</td><td class="num">7,930</td><td class="num">8.31%</td><td class="num">0.05%</td></tr>
+<tr><th scope="row">08/05</th><td class="num">1,335</td><td class="num posv">+9.88%</td><td class="num">4,891</td><td class="num posv">+111</td><td class="num">8,041</td><td class="num">7.61%</td><td class="num">0.06%</td></tr>
+<tr class="warn"><th scope="row">08/06</th><td class="num">1,290</td><td class="num negv">-3.37%</td><td class="num">6,232</td><td class="num posv">+356</td><td class="num">8,397</td><td class="num">7.95%</td><td class="num">0.03%</td></tr>
+<tr class="warn"><th scope="row">08/07</th><td class="num">1,240</td><td class="num negv">-3.88%</td><td class="num">3,199</td><td class="num posv">+204</td><td class="num">8,601</td><td class="num">8.14%</td><td class="num">0.06%</td></tr>
+<tr><th scope="row">08/10</th><td class="num">1,330</td><td class="num posv">+7.26%</td><td class="num">4,265</td><td class="num posv">+59</td><td class="num">8,660</td><td class="num">8.2%</td><td class="num">0.02%</td></tr>
+<tr><th scope="row">08/11</th><td class="num">1,460</td><td class="num posv">+9.77%</td><td class="num">5,614</td><td class="num posv">+115</td><td class="num">8,775</td><td class="num">8.31%</td><td class="num">0.05%</td></tr>
+<tr><th scope="row">08/12</th><td class="num">1,440</td><td class="num negv">-1.37%</td><td class="num">6,003</td><td class="num posv">+44</td><td class="num">8,819</td><td class="num">8.35%</td><td class="num">0.07%</td></tr>
+<tr><th scope="row">08/13</th><td class="num">1,445</td><td class="num posv">+0.35%</td><td class="num">3,405</td><td class="num posv">+75</td><td class="num">8,894</td><td class="num">8.42%</td><td class="num">0.32%</td></tr>
+<tr><th scope="row">08/14</th><td class="num">1,500</td><td class="num posv">+3.81%</td><td class="num">4,016</td><td class="num posv">+24</td><td class="num">8,918</td><td class="num">8.44%</td><td class="num">0.05%</td></tr>
+<tr class="warn"><th scope="row">08/17</th><td class="num">1,410</td><td class="num negv">-6.00%</td><td class="num">4,986</td><td class="num negv">-5</td><td class="num">8,913</td><td class="num">8.44%</td><td class="num">0.12%</td></tr></tbody>
+  </table>
+  <table>
+    <thead><tr><th>現象</th><th>數字</th><th>解讀</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">融資 10 個交易日增加 12.4%</th><td class="num">7,930 → 8,913 張</td><td>股價自 1,215 漲到 1,410，槓桿資金同步追價</td></tr>
+      <tr class="warn"><th scope="row">下跌日反而加碼最兇</th><td class="num">08/06 +356、08/07 +204 張</td><td>這兩天正是 AOP 仲裁重訊前後（8/7 接獲、8/8 記者會），股價 −3.37%、−3.88%，<b>融資逆勢大增</b>——把利空當低接機會</td></tr>
+      <tr class="warn"><th scope="row">重挫日幾乎沒有減碼</th><td class="num">08/17 −6.00%，融資僅 −5 張</td><td>單日跌 6% 卻幾乎無人認賠，<span class="negv">融資籌碼被套住而非洗清</span>，續跌時容易形成賣壓</td></tr>
+      <tr><th scope="row">當沖與融券極低</th><td class="num">當沖 0.02–0.32%、融券餘額 29 張</td><td>短線投機與放空力量都小，走勢主要由現股與融資決定</td></tr>
+    </tbody>
+  </table>
+  <p class="cap"><b>但別過度解讀：</b>融資使用率僅 8.44%，絕對水位偏低；融資餘額 8,913 張約當已發行股數的 <b>2.1%</b>（<span class="calc">推算</span>8,913 ÷ 422,433 張）。這是<b>需要持續盯、但目前不構成警報</b>的訊號。</p>
+
+  <h3><span class="no">6-2</span>六步訊號總盤點</h3>
+  <table>
+    <thead><tr><th>面向</th><th>正面訊號</th><th>負面訊號</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">現金流<br>（第 1 步）</th><td class="posv">A 由連八年負值轉正並倍增（85 分）；E 現金 245 億且近兩年靠本業堆高、不再靠募資（90 分）；無「三重疊加」警戒</td><td class="negv"><b>規則五僅 1／10 年通過（10 分）</b>；歷史 6 年出現「A 負＋C 正」；2026H1 A 41.3 億仍低於 D 55.3 億</td></tr>
+      <tr><th scope="row">基本面<br>（第 2 步）</th><td class="posv">上半年淨利年增 123%、營業槓桿發揮；官方數字與截圖完全交叉驗證</td><td class="negv">配股使股數 +10.7%，跨期 EPS 基礎不一致；殖利率僅約 0.1%</td></tr>
+      <tr><th scope="row">法說會<br>（第 3 步）</th><td class="posv">PV 已 50 國取證、注射筆 7 月美國開賣、ET 多國取證在即、產能三地接力、四項新藥進臨床</td><td class="negv"><b>AOP 仲裁保守情境約 −36 億（每股 8.4 元）</b>；是否已提列負債準備未查得；CMS 追溯認列墊高 Q2 毛利率至 94.23%</td></tr>
+      <tr><th scope="row">營收<br>（第 4 步）</th><td class="posv">1–7 月年增 77.5%、7 月創單月新高、七個月做到去年全年 92.6%；Q3 法人估只要持平即達標</td><td class="negv">全年預估需 8–12 月月均再成長 11%；5 月起的高年增率含 CMS 追溯認列成分</td></tr>
+      <tr><th scope="row">估值<br>（第 5 步）</th><td class="posv">若 2027 年預估成真，30 倍落在歷史區間內，不算離譜</td><td class="negv"><b>以 2026 年獲利計算是 54 倍，高於 27–45 倍區間</b>；目標價三個月 +120% 但 EPS 僅 +11%；2027F 隱含 PV 再成長 46%；股本可能再稀釋</td></tr>
+      <tr><th scope="row">籌碼<br>（第 6 步）</th><td class="posv">融資使用率僅 8.44%、當沖與融券極低，籌碼不浮動</td><td class="negv">融資 10 日增 12.4%、下跌日逆勢加碼、重挫日不認賠</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="no">6-3</span>核心矛盾：三句話</h3>
+  <div class="key">
+    <b>① 成長是真的。</b>營收年增 77.5%、A 由負轉正並倍增、官方數字與第三方資料完全對得上。這不是題材敘事，是已經發生在財報上的事實。<br><br>
+    <b>② 但獲利品質還沒跟上。</b>規則五十年只通過一次；2026 上半年營業現金流仍落後稅前淨利 14 億；Q2 毛利率 94.23% 含 CMS 追溯認列的非經常性成分。<b>賺到的錢還沒完全變成現金。</b><br><br>
+    <b>③ 而價格已經買到 2027 年。</b>1,410 元對應 2026 年獲利是 54 倍，必須跳到 2027 年預估獲利才能回到歷史 27–45 倍區間。中間隔著約一年半的執行風險，且那份預估的主力是 PV 再成長 46%，不是市場關注的 ET。
+  </div>
+
+  <h3><span class="no">6-4</span>三種情境與觸發條件</h3>
+  <table>
+    <thead><tr><th>情境</th><th>觸發條件</th><th>估值推論</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="posv">樂觀</th><td>8/30 FDA 核准 ET；注射筆放量；全年營收達 283 億；AOP 以互抵收場；A 與 D 落差收斂</td><td>2027F EPS 站上 47–50 元，給 35–45 倍 → 約 1,645～2,235 元（<span class="calc">推算</span>）</td></tr>
+      <tr><th scope="row" class="tag-ok">中性</th><td>ET 取證但放量慢；全年營收約 260–270 億；AOP 部分支付；獲利品質緩慢改善</td><td>2027F EPS 約 40 元，給 30–40 倍 → 約 1,200～1,600 元（<span class="calc">推算</span>）</td></tr>
+      <tr class="warn"><th scope="row" class="negv">保守</th><td>FDA 延後或發出 CRL；PV 成長放緩；AOP 全額支付且未提列；CMS 追溯效應退場後毛利率回落</td><td>EPS 與倍數同時下修，2026F EPS 24 元給 30–45 倍 → 約 720～1,080 元（<span class="calc">推算</span>）</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">三個情境皆為<span class="calc">推算</span>敏感度試算，用來說明「哪些變數會把價格推到哪裡」，<b>不是價格預測，也不是機率分配</b>。我沒有能力判斷哪個情境比較可能發生。</p>
+
+  <h3><span class="no">6-5</span>接下來可以自己驗證的六件事</h3>
+  <table>
+    <thead><tr><th>#</th><th>觀察指標</th><th>時間點</th><th>怎麼判讀</th></tr></thead>
+    <tbody>
+      <tr class="warn"><th scope="row">1</th><td>FDA 對 ET 適應症的決定</td><td><b>2026/08/30（約兩週內）</b></td><td>最短期、影響最直接。核准＝故事成立；延後或 CRL＝2027 預估全面重估</td></tr>
+      <tr><th scope="row">2</th><td>8 月、9 月月營收</td><td>9/10、10/10 前後</td><td>各需 ≥25.29 億才達 Q3 法人估；全年 283 億則需 8–12 月月均 27.81 億</td></tr>
+      <tr class="warn"><th scope="row">3</th><td>Q3 財報的 A 與 D 落差</td><td>11 月</td><td>規則五的關鍵。落差收斂＝獲利品質改善；擴大＝應收帳款或存貨在堆積</td></tr>
+      <tr><th scope="row">4</th><td>Q3 毛利率是否回落至約 91%</td><td>11 月</td><td>驗證 Q2 的 94.23% 有多少是 CMS 追溯認列的一次性效果</td></tr>
+      <tr><th scope="row">5</th><td>財報附註：AOP 案是否提列負債準備</td><td>Q2／Q3 合併財報附註</td><td>本次分析<b>唯一沒查到的重大缺口</b>。未提列＝未來某期會一次性認列</td></tr>
+      <tr><th scope="row">6</th><td>投資活動與融資活動明細</td><td>隨時可補</td><td>補上後可讓規則二、三、四由「暫定」轉為定案</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="no">6-6</span>結論與限制</h3>
+  <div class="key">
+    <b>推理結論：</b>這是一家<b>基本面轉折已經確認、但獲利品質尚未同步、且股價已提前反映一年半後獲利</b>的公司。第 1 步的現金流 68.3 分（良好）支持它通過體質關卡；第 4 步的營收數據支持成長是真的；<b>真正的爭議點不在「這家公司好不好」，而在「現在這個價格留下多少犯錯空間」</b>——答案是不多。<br><br>
+    對不同的人，同一份分析會導向不同的行動：看重成長確定性、能承受高波動與長持有期的人，會認為 2027 年的獲利值得等；看重安全邊際、以現金流品質為核心的人，會認為 54 倍的 2026 年本益比加上規則五 10 分，不是舒服的進場位置。<b>這兩種判斷都能從同一批數字推得出來，差別在你的條件，不在數字本身。</b>
+  </div>
+  <div class="key alert" style="margin-top:16px">
+    <b>本次分析明確的限制，請一併納入考量：</b><br>
+    · 規則二、三、四<b>仍為暫定評分</b>，投資與融資活動明細未取得。<br>
+    · <b>未查得公司是否已就 AOP 仲裁案提列負債準備</b>，這是保守情境中最大的未知數。<br>
+    · 股價、籌碼、財報數字皆有時間落差，且部分來自使用者提供的截圖與媒體報導，<b>非直接讀取官方財報或即時報價</b>。<br>
+    · 2027 年 EPS 預估僅取得一家法人明確數字、一家反推數字，<b>樣本過少</b>。<br>
+    · 我沒有直接讀取官方法說會簡報 PDF（MOPS 連結受 robots.txt 限制）。<br>
+    · 本報告為公開資訊的結構化整理與推理，<b>不是投資建議</b>。任何買賣決定請自行判斷，或諮詢具證照的專業人士。
+  </div>
+
+  <div class="snap-note">
+    <b>本節資料來源：</b><br>
+    · 2026/08/04–08/17 收盤價、成交量、融資買賣與增減、融資餘額與使用率、融券餘額、資券當沖比率：<b>使用者提供之融資融券日資料截圖</b>（查詢期間 2025/08/19～2026/08/18）。非本次搜尋所得。<br>
+    · 其餘引用之現金流、財報、法說會、營收、法人預估數字，來源已分別列於第 1～5 步各節。<br>
+    · 已發行股數 422,433,303 股（用於計算融資占比）：Yahoo 股市基本資料，資料時間 2026/08/16。
+  </div>
+</section>
+
+<footer>
+  報告版本 v8.0（六步完成＋兩輪明細校正）　·　生成時間 2026-08-17 17:50<br>
+  本報告為現金流量表數據的結構化分析，非投資建議。
+</footer>
+</div>
+
+<script>
+(function () {
+  var pads = Array.prototype.slice.call(document.querySelectorAll('.pad'));
+  pads.forEach(function (p) {
+    p.addEventListener('click', function () {
+      if (p.classList.contains('locked')) return;
+      var el = document.getElementById(p.dataset.target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+  if ('IntersectionObserver' in window && sections.length) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        pads.forEach(function (p) {
+          p.classList.toggle('active', p.dataset.target === e.target.id);
+        });
+      });
+    }, { rootMargin: '-64px 0px -55% 0px', threshold: 0 });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
