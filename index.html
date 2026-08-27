@@ -1,151 +1,242 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>台股個股分析總覽｜Jackie's Stock Analysis</title>
+<title>個股分析報告總覽</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#1c2430; --sub:#5b6472; --line:#e3e7ec; --paper:#fbfaf7;
-    --blue:#2456a6; --blue-bg:#eaf1fb; --accent:#b9770e;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.6;}
-  .wrap{max-width:980px;margin:0 auto;padding:36px 20px 80px;}
-  header{border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:24px;}
-  header .tag{font-size:12px;letter-spacing:.15em;color:var(--sub);}
-  header h1{font-size:26px;margin:6px 0 8px;font-family:"Noto Serif TC",serif;}
-  header p{font-size:13.5px;color:var(--sub);margin:4px 0;}
-  header .badges img{height:20px;margin-right:4px;vertical-align:middle;}
+:root{
+  --ink:#141C26; --ink2:#3D4A5A; --paper:#F4F6F3; --card:#FFFFFF;
+  --line:#DDE2DC; --accent:#1F4E79; --accent-soft:#E7EEF5;
+  --pos:#146B58; --warn:#8A5A00; --warn-bg:#FDF4E0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans TC",system-ui,sans-serif;line-height:1.7;
+  font-size:16px;-webkit-text-size-adjust:100%}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px 70px}
 
-  .controls{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 22px;align-items:center;}
-  #search{flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--line);border-radius:6px;
-    font-size:14px;font-family:inherit;background:#fff;}
-  .chip{padding:6px 14px;border:1px solid var(--line);border-radius:20px;background:#fff;
-    font-size:12.5px;cursor:pointer;color:var(--sub);user-select:none;}
-  .chip.active{background:var(--blue);color:#fff;border-color:var(--blue);}
-  .sortbtn{font-size:12.5px;color:var(--sub);cursor:pointer;text-decoration:underline;margin-left:auto;}
+header{border-bottom:3px solid var(--ink);padding:32px 0 20px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+h1{font-family:"Noto Serif TC",serif;font-weight:700;
+  font-size:clamp(25px,6.5vw,38px);margin:0;letter-spacing:-.01em;line-height:1.25}
+.sub{color:var(--ink2);font-size:14.5px;margin:10px 0 0}
 
-  .count{font-size:12.5px;color:var(--sub);margin-bottom:10px;}
+.bar{position:sticky;top:0;z-index:10;background:var(--paper);
+  padding:14px 0 10px;border-bottom:1px solid var(--line)}
+#q{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:4px;
+  background:#fff;font-size:16px;font-family:inherit;color:var(--ink)}
+#q:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+.filters{display:flex;gap:6px;margin-top:9px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.filters button{flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:12px;
+  border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;
+  color:var(--ink2);cursor:pointer;white-space:nowrap}
+.filters button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.count{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink2);margin:12px 0 6px}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
-  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px 18px;
-    text-decoration:none;color:inherit;display:block;transition:box-shadow .15s, transform .15s;}
-  .card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px);}
-  .card .ticker{font-size:11.5px;font-weight:700;color:var(--blue);background:var(--blue-bg);
-    display:inline-block;padding:2px 8px;border-radius:4px;margin-bottom:8px;}
-  .card .ticker.special{color:var(--accent);background:#fdf3e1;}
-  .card h3{font-size:15px;margin:0 0 10px;font-family:"Noto Serif TC",serif;line-height:1.4;}
-  .card .date{font-size:11.5px;color:var(--sub);}
-  .card .visits{margin-top:8px;}
-  .card .visits img{height:18px;opacity:0.85;vertical-align:middle;}
+ul{list-style:none;margin:0;padding:0}
+li a{display:flex;align-items:baseline;gap:11px;text-decoration:none;color:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:4px;
+  padding:13px 14px;margin-bottom:8px;transition:.12s}
+li a:hover,li a:focus{border-color:var(--accent);box-shadow:0 1px 6px rgba(31,78,121,.1)}
+.code{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:14.5px;
+  color:var(--accent);flex:0 0 auto;min-width:48px}
+.meta{flex:1 1 auto;min-width:0}
+.nm{font-family:"Noto Serif TC",serif;font-weight:700;font-size:16.5px;
+  display:block;line-height:1.35}
+.slug{font-family:"IBM Plex Mono",monospace;font-size:11px;color:#8A94A0;
+  display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ver{font-family:"IBM Plex Mono",monospace;font-size:10.5px;background:var(--warn-bg);
+  border:1px solid #E8D5A8;color:var(--warn);padding:1px 6px;border-radius:3px;
+  margin-left:6px;white-space:nowrap;vertical-align:1px}
+.kind{flex:0 0 auto;font-size:11px;padding:2px 8px;border-radius:99px;
+  border:1px solid var(--line);color:var(--ink2);background:#F7F8F6;white-space:nowrap}
+.kind.etf{background:var(--accent-soft);border-color:#C6D8E7;color:var(--accent)}
+.kind.cmp{background:var(--warn-bg);border-color:#E8D5A8;color:var(--warn)}
+.kind.top{background:#EDF4F1;border-color:#BCD8CD;color:var(--pos)}
 
-  .empty{padding:40px 0;text-align:center;color:var(--sub);font-size:13.5px;display:none;}
-
-  .foot{font-size:12px;color:var(--sub);border-top:1px solid var(--line);
-    margin-top:44px;padding-top:16px;}
-  .foot a{color:var(--blue);}
+.state{padding:18px 4px;color:var(--ink2);font-size:14px}
+.state b{color:var(--ink)}
+.note{font-size:12.5px;color:var(--ink2);background:#EFF1EE;border:1px solid var(--line);
+  padding:9px 12px;border-radius:4px;margin:0 0 14px;display:none}
+code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;
+  background:#EAEDE8;padding:2px 5px;border-radius:3px;word-break:break-all}
+footer{border-top:3px solid var(--ink);margin-top:36px;padding-top:14px;
+  font-size:12.5px;color:var(--ink2)}
+footer a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <div class="tag">STOCK ANALYSIS ARCHIVE</div>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=mjib007.stock-analysis.index" alt="Visitors" style="margin-bottom:8px;opacity:0.85;">
-  <h1>📊 台股個股分析總覽</h1>
-  <p>依「現金流優先、基本面在後」六步驟框架整理的個股分析報告集，每份報告皆附資料來源頁碼與查證連結。</p>
-  <p style="font-size:12px;">⚠️ 這是分析方法論與個人研究紀錄，不是投資建議。<a href="README.md" style="color:var(--blue);">框架說明 README →</a></p>
+  <p class="eyebrow">Cash Flow First · Report Index</p>
+  <h1>個股分析報告總覽</h1>
+  <p class="sub">依「台股個股初步分析六步驟」流程產出，以現金流量表六大規則為起點，再往基本資訊、法說會、營收趨勢、估值與決策推理展開。</p>
 </header>
 
-<div class="controls">
-  <input id="search" type="text" placeholder="搜尋股票代號或公司名稱…">
-  <span class="chip active" data-filter="all">全部</span>
-  <span class="chip" data-filter="analysis">個股分析</span>
-  <span class="chip" data-filter="special">特別事件</span>
-  <span class="sortbtn" id="sortToggle">依日期排序 ↓</span>
+<div class="bar">
+  <input id="q" type="search" placeholder="搜尋代號或名稱，例如 2313 或 華通" autocomplete="off">
+  <div class="filters">
+    <button class="on" data-k="all">全部</button>
+    <button data-k="stock">個股</button>
+    <button data-k="etf">ETF</button>
+    <button data-k="cmp">比較</button>
+    <button data-k="top">專題</button>
+  </div>
 </div>
 
-<div class="count" id="count"></div>
-<div class="grid" id="grid"></div>
-<div class="empty" id="empty">沒有符合的結果</div>
+<p class="count" id="count"></p>
+<p class="note" id="note"></p>
+<ul id="list"></ul>
+<div class="state" id="state">載入中…</div>
 
-<div class="foot">
-  資料每次 <code>git push</code> 後由本頁自動反映（依 commit 紀錄），共 <span id="totalCount"></span> 份報告。<br>
-  <a href="https://github.com/mjib007/stock-analysis">回到 GitHub Repo</a>　｜　<a href="LICENSE">CC BY-NC 4.0</a>（姓名標示－非商業性）
+<footer>
+  <p>清單自動讀取 repo 的 <code>reports/</code> 資料夾，新增報告後重新整理即可看到。<br>
+  內容為公開資訊的整理與推理，作者非投資顧問，不構成投資建議。<br>
+  Repo：<a href="https://github.com/qqryono1/stock-analysis">github.com/qqryono1/stock-analysis</a></p>
+</footer>
+
 </div>
-
-</div>
-
 <script>
-const REPORTS = [
-  {ticker:"1560", name:"中砂", title:"中砂 1560｜台股個股初步分析", file:"reports/1560_cgw_analysis.html", date:"2026-08-03", type:"analysis", pageId:"1560"},
-  {ticker:"2327", name:"國巨", title:"2327 國巨｜現金流量表六大規則分析", file:"reports/2327_yageo_analysis.html", date:"2026-07-31", type:"analysis", pageId:"2327"},
-  {ticker:"2327", name:"國巨（更新版）", title:"國巨 2327 個股初步分析（更新版）", file:"reports/2327_yageo_analysis_20260801.html", date:"2026-08-01", type:"analysis", pageId:"2327v2"},
-  {ticker:"2330", name:"台積電", title:"2330 台積電｜現金流量表六大規則分析", file:"reports/2330_analysis.html", date:"2026-07-25", type:"analysis", pageId:"2330"},
-  {ticker:"2352", name:"佳世達", title:"佳世達 (2352) 個股分析報告", file:"reports/qisda_2352.html", date:"2026-07-25", type:"analysis", pageId:"2352"},
-  {ticker:"2492", name:"華新科", title:"華新科（2492）初步分析｜現金流量表六大規則", file:"reports/2492_walsin_analysis.html", date:"2026-07-26", type:"analysis", pageId:"2492"},
-  {ticker:"2762", name:"世界健身-KY", title:"世界健身-KY（2762）股票初步分析報告", file:"reports/2762_worldgym_analysis.html", date:"2026-07-27", type:"analysis", pageId:"2762"},
-  {ticker:"3008", name:"大立光電", title:"3008 大立光電｜台股個股初步分析", file:"reports/3008_largan_analysis.html", date:"2026-08-19", type:"analysis", pageId:"3008"},
-  {ticker:"3037", name:"欣興電子", title:"欣興電子 3037｜台股個股初步分析", file:"reports/3037_unimicron_analysis.html", date:"2026-08-06", type:"analysis", pageId:"3037"},
-  {ticker:"3260", name:"威剛科技", title:"威剛科技 3260｜台股個股初步分析", file:"reports/3260_adata_analysis.html", date:"2026-07-26", type:"analysis", pageId:"3260"},
-  {ticker:"3711", name:"日月光投控", title:"3711 日月光投控｜台股初步分析", file:"reports/3711_ase_analysis.html", date:"2026-08-09", type:"analysis", pageId:"3711"},
-  {ticker:"6239", name:"力成科技", title:"力成科技(6239) 2026年第二季財報分析", file:"reports/6239_powertech_analysis.html", date:"2026-08-10", type:"analysis", pageId:"6239"},
-  {ticker:"6446", name:"藥華藥 × AOP", title:"藥華藥 × AOP 國際仲裁案時間軸", file:"reports/6446_aop_arbitration_timeline.html", date:"2026-08-09", type:"special", pageId:"6446-aop-arbitration"},
-  {ticker:"7769", name:"鴻勁精密", title:"7769 鴻勁精密｜台股初步分析", file:"reports/7769_hongjin_analysis.html", date:"2026-08-08", type:"analysis", pageId:"7769"},
-  {ticker:"7823", name:"奧義賽博科技", title:"7823 奧義賽博科技 115年Q1 獲利來源與虧損原因分析", file:"reports/7823_cycraft_analysis.html", date:"2026-08-08", type:"analysis", pageId:"7823_cycraft_analysis"},
-  {ticker:"5904", name:"寶雅生活館", title:"寶雅 5904｜台股個股初步分析（六步驟完成）", file:"reports/5904_poya_analysis.html", date:"2026-08-15", type:"analysis", pageId:"5904"},
-  {ticker:"0050×00881", name:"0050 vs 00881", title:"0050 vs 00881｜成分股結構與波動性比較", file:"reports/0050_vs_00881_comparison.html", date:"2026-08-22", type:"special", pageId:"0050vs00881"},
-  {ticker:"00737×00851×00762", name:"三檔AI/機器人ETF", title:"00737 vs 00851 vs 00762｜AI／機器人主題ETF成分股比較", file:"reports/00737_00851_00762_ai_robot_etf_comparison.html", date:"2026-08-23", type:"special", pageId:"00737-00851-00762-comparison"},
-];
+(function(){
+  var OWNER='qqryono1', REPO='stock-analysis', DIR='reports';
 
-let sortDesc = true;
-let activeFilter = "all";
+  /* 代號 → 公司名稱。新增報告若代號不在這裡，會自動顯示檔名中的英文代稱。 */
+  var NAMES={
+    '0050':'元大台灣50','00737':'國泰AI+Robo','00762':'元大全球AI',
+    '00851':'台新全球AI','00881':'國泰台灣5G+',
+    '1560':'中國砂輪','2313':'華通','2327':'國巨','2330':'台積電',
+    '2352':'佳世達','2492':'華新科','2762':'世界健身','3008':'大立光',
+    '3037':'欣興','3260':'威剛','3711':'日月光投控','5904':'寶雅',
+    '6239':'力成','6446':'藥華藥','6525':'捷敏-KY','7769':'鴻勁',
+    '7823':'奧義智慧'
+  };
 
-const grid = document.getElementById('grid');
-const empty = document.getElementById('empty');
-const countEl = document.getElementById('count');
-document.getElementById('totalCount').textContent = REPORTS.length;
+  /* 專題報告的自訂標題（檔名 → 顯示名稱） */
+  var TOPICS={
+    '6446_aop_arbitration_timeline.html':'藥華藥　AOP 仲裁時間軸'
+  };
 
-function render(){
-  const q = document.getElementById('search').value.trim().toLowerCase();
-  let items = REPORTS.filter(r => {
-    const matchQ = !q || r.ticker.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || r.title.toLowerCase().includes(q);
-    const matchF = activeFilter === "all" || r.type === activeFilter;
-    return matchQ && matchF;
-  });
-  items.sort((a,b) => sortDesc ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date));
+  /* GitHub API 失敗時的備援清單（2026/08 現況） */
+  var FALLBACK=[
+    '0050_vs_00881_comparison.html','00737_00851_00762_ai_robot_etf_comparison.html',
+    '1560_cgw_analysis.html','2313_compeq_analysis.html','2327_yageo_analysis.html',
+    '2327_yageo_analysis_20260801.html','2330_analysis.html','2492_walsin_analysis.html',
+    '2762_worldgym_analysis.html','3008_largan_analysis.html','3037_unimicron_analysis.html',
+    '3260_adata_analysis.html','3711_ase_analysis.html','5904_poya_analysis.html',
+    '6239_powertech_analysis.html','6446_aop_arbitration_timeline.html',
+    '6446_pharmaessentia_analysis.html','6525_jiemin_analysis.html',
+    '7769_hongjin_analysis.html','7823_cycraft_analysis.html','qisda_2352.html'
+  ];
 
-  grid.innerHTML = items.map(r => `
-    <a class="card" href="${r.file}">
-      <span class="ticker ${r.type==='special'?'special':''}">${r.ticker}｜${r.name}</span>
-      <h3>${r.title}</h3>
-      <div class="date">最後更新：${r.date}</div>
-      <div class="visits"><img src="https://visitor-badge.laobi.icu/badge?page_id=mjib007.stock-analysis.${r.pageId}" alt="瀏覽次數"></div>
-    </a>
-  `).join('');
+  var listEl=document.getElementById('list'), stateEl=document.getElementById('state'),
+      countEl=document.getElementById('count'), noteEl=document.getElementById('note'),
+      qEl=document.getElementById('q');
+  var items=[], kind='all', q='';
 
-  countEl.textContent = `共 ${items.length} 份報告`;
-  empty.style.display = items.length ? 'none' : 'block';
-}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 
-document.getElementById('search').addEventListener('input', render);
-document.querySelectorAll('.chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    activeFilter = chip.dataset.filter;
+  function titleCase(s){
+    return s.replace(/[_-]+/g,' ').trim()
+            .replace(/(^|\s)\w/g,function(c){return c.toUpperCase();});
+  }
+
+  function parse(file){
+    var base=file.replace(/\.html?$/i,'');
+    var parts=base.split(/[_\-.]+/);
+    var codes=[], ver='', words=[];
+    parts.forEach(function(p){
+      if(/^\d{8}$/.test(p)){ ver=p; }
+      else if(/^\d{4,5}$/.test(p)){ codes.push(p); }
+      else if(p && !/^(analysis|report|html)$/i.test(p)){ words.push(p); }
+    });
+    var code=codes[0]||'—';
+    var isCmp=/comparison|_vs_/i.test(base)||codes.length>1;
+    var isTopic=!!TOPICS[file]||/timeline|arbitration|note|memo/i.test(base);
+    var isEtf=/etf/i.test(base)||codes.some(function(c){return c.indexOf('00')===0&&c.length===5;})
+              ||code==='0050';
+    var k = isCmp ? 'cmp' : (isTopic ? 'top' : (isEtf ? 'etf' : 'stock'));
+
+    var label;
+    if(TOPICS[file]) label=TOPICS[file];
+    else if(isCmp) label=codes.map(function(c){return NAMES[c]||c;})
+                             .join(codes.length>2?'、':' vs ');
+    else if(isTopic) label=(NAMES[code]||titleCase(words.join(' ')))+'　專題';
+    else label=NAMES[code]||titleCase(words.join(' '))||code;
+
+    var verTxt='';
+    if(ver) verTxt=ver.slice(0,4)+'/'+ver.slice(4,6)+'/'+ver.slice(6,8)+' 版';
+
+    return {file:file, code:code, codes:codes, kind:k, label:label, ver:verTxt,
+            hay:(file+' '+label+' '+codes.join(' ')).toLowerCase()};
+  }
+
+  function kindTag(k){
+    if(k==='etf') return '<span class="kind etf">ETF</span>';
+    if(k==='cmp') return '<span class="kind cmp">比較</span>';
+    if(k==='top') return '<span class="kind top">專題</span>';
+    return '<span class="kind">個股</span>';
+  }
+
+  function render(){
+    var out=items.filter(function(it){
+      if(kind!=='all'&&it.kind!==kind) return false;
+      if(q&&it.hay.indexOf(q)<0) return false;
+      return true;
+    });
+    countEl.textContent='共 '+out.length+' 份'+(items.length!==out.length?'（總計 '+items.length+' 份）':'');
+    listEl.innerHTML=out.map(function(it){
+      return '<li><a href="'+DIR+'/'+encodeURIComponent(it.file)+'">'
+        +'<span class="code">'+esc(it.code)+'</span>'
+        +'<span class="meta"><span class="nm">'+esc(it.label)
+        +(it.ver?'<span class="ver">'+esc(it.ver)+'</span>':'')+'</span>'
+        +'<span class="slug">'+esc(it.file)+'</span></span>'
+        +kindTag(it.kind)+'</a></li>';
+    }).join('');
+    stateEl.style.display=out.length?'none':'block';
+    if(!out.length) stateEl.innerHTML='<b>沒有符合的報告。</b>清空搜尋或切回「全部」試試。';
+  }
+
+  function load(files){
+    items=files.filter(function(f){return /\.html?$/i.test(f)&&!/^index\.html?$/i.test(f);})
+               .map(parse)
+               .sort(function(a,b){
+                 var c=String(a.code).localeCompare(String(b.code),undefined,{numeric:true});
+                 return c!==0?c:a.file.localeCompare(b.file);
+               });
     render();
-  });
-});
-document.getElementById('sortToggle').addEventListener('click', (e) => {
-  sortDesc = !sortDesc;
-  e.target.textContent = sortDesc ? '依日期排序 ↓' : '依日期排序 ↑';
-  render();
-});
+  }
 
-render();
+  qEl.addEventListener('input',function(){q=qEl.value.trim().toLowerCase();render();});
+  Array.prototype.forEach.call(document.querySelectorAll('.filters button'),function(b){
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.filters button'),
+        function(x){x.classList.remove('on');});
+      b.classList.add('on'); kind=b.dataset.k; render();
+    });
+  });
+
+  fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+DIR)
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(data){
+      if(!Array.isArray(data)) throw new Error('bad payload');
+      load(data.filter(function(f){return f.type==='file';})
+               .map(function(f){return f.name;}));
+    })
+    .catch(function(){
+      noteEl.style.display='block';
+      noteEl.innerHTML='<b>即時清單讀取失敗</b>，改用內建的備援清單顯示（可能未包含最新報告）。'
+        +'常見原因是 GitHub API 未登入時每小時 60 次的請求上限，稍後重新整理即可。';
+      load(FALLBACK);
+    });
+})();
 </script>
 </body>
 </html>
